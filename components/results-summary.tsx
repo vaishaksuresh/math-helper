@@ -94,6 +94,20 @@ export function ResultsSummary({ session, questions, answers }: ResultsSummaryPr
                       </div>
                     ))}
                   </div>
+                  {(answer?.hintUsed || answer?.solveUsed) && (
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {answer.hintUsed && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">
+                          💡 Hint used
+                        </span>
+                      )}
+                      {answer.solveUsed && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                          🔍 Solved for me
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <p className="text-gray-500 dark:text-gray-400 italic mt-2">{q.explanation}</p>
                 </div>
               </details>
