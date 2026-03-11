@@ -82,6 +82,7 @@ export async function POST(req: NextRequest) {
         choices: JSON.stringify(q.choices),
         correctAnswer: q.correctAnswer,
         explanation: q.explanation,
+        hint: q.hint,
       })
     }
 
