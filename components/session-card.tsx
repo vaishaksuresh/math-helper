@@ -30,8 +30,14 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
   const actionLabel = session.status === 'active' ? 'Resume' : 'View Results'
   const actionVariant = session.status === 'active' ? 'default' : 'outline'
 
+  const accentBorder = {
+    active: 'border-l-4 border-l-teal-500',
+    completed: 'border-l-4 border-l-emerald-500',
+    quit: 'border-l-4 border-l-gray-300 dark:border-l-gray-600',
+  }[session.status]
+
   return (
-    <Card className={cn('hover:shadow-md transition-shadow', compact && 'shadow-none border-gray-100 dark:border-gray-700')}>
+    <Card className={cn('hover:shadow-md hover:-translate-y-0.5 transition-all', accentBorder, compact && 'shadow-none')}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">

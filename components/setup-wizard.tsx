@@ -92,14 +92,14 @@ export function SetupWizard() {
           <div key={s} className="flex items-center gap-2">
             <div className={cn(
               'w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors',
-              i < step ? 'bg-indigo-600 text-white' : i === step ? 'bg-indigo-600 text-white ring-4 ring-indigo-100' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
+              i < step ? 'bg-teal-600 text-white' : i === step ? 'bg-teal-600 text-white ring-4 ring-teal-100' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
             )}>
               {i < step ? '✓' : i + 1}
             </div>
-            <span className={cn('text-sm font-medium hidden sm:block', i === step ? 'text-indigo-600' : 'text-gray-400')}>
+            <span className={cn('text-sm font-medium hidden sm:block', i === step ? 'text-teal-600' : 'text-gray-400')}>
               {s}
             </span>
-            {i < steps.length - 1 && <div className={cn('w-8 h-0.5', i < step ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700')} />}
+            {i < steps.length - 1 && <div className={cn('w-8 h-0.5', i < step ? 'bg-teal-600' : 'bg-gray-200 dark:bg-gray-700')} />}
           </div>
         ))}
       </div>
@@ -117,8 +117,8 @@ export function SetupWizard() {
                 className={cn(
                   'p-5 rounded-2xl border-2 font-bold text-2xl transition-all duration-150 hover:scale-105',
                   gradeLevel === g
-                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 ring-2 ring-indigo-200 scale-105'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-indigo-300'
+                    ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 text-teal-700 ring-2 ring-teal-200 scale-105'
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-teal-300'
                 )}
               >
                 <div className="text-3xl mb-1">📚</div>
@@ -180,11 +180,11 @@ export function SetupWizard() {
               className={cn(
                 'p-5 rounded-2xl border-2 text-center transition-all duration-150',
                 mode === 'count'
-                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 ring-2 ring-indigo-200'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-300'
+                  ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 ring-2 ring-teal-200'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-300'
               )}
             >
-              <Hash className={cn('h-8 w-8 mx-auto mb-2', mode === 'count' ? 'text-indigo-600' : 'text-gray-400 dark:text-gray-500')} />
+              <Hash className={cn('h-8 w-8 mx-auto mb-2', mode === 'count' ? 'text-teal-600' : 'text-gray-400 dark:text-gray-500')} />
               <div className="font-bold text-gray-900 dark:text-gray-100">By Questions</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Choose how many</div>
             </button>
@@ -193,11 +193,11 @@ export function SetupWizard() {
               className={cn(
                 'p-5 rounded-2xl border-2 text-center transition-all duration-150',
                 mode === 'time'
-                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 ring-2 ring-indigo-200'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-300'
+                  ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 ring-2 ring-teal-200'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-300'
               )}
             >
-              <AlarmClock className={cn('h-8 w-8 mx-auto mb-2', mode === 'time' ? 'text-indigo-600' : 'text-gray-400 dark:text-gray-500')} />
+              <AlarmClock className={cn('h-8 w-8 mx-auto mb-2', mode === 'time' ? 'text-teal-600' : 'text-gray-400 dark:text-gray-500')} />
               <div className="font-bold text-gray-900 dark:text-gray-100">By Time</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Set a time limit</div>
             </button>
@@ -214,8 +214,8 @@ export function SetupWizard() {
                     className={cn(
                       'px-5 py-2.5 rounded-xl font-semibold border-2 transition-all',
                       totalQuestions === n
-                        ? 'border-indigo-500 bg-indigo-600 text-white'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-indigo-300'
+                        ? 'border-teal-500 bg-teal-600 text-white'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-teal-300'
                     )}
                   >
                     {n}
@@ -236,8 +236,8 @@ export function SetupWizard() {
                     className={cn(
                       'px-5 py-2.5 rounded-xl font-semibold border-2 transition-all',
                       timeLimitMinutes === t
-                        ? 'border-indigo-500 bg-indigo-600 text-white'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-indigo-300'
+                        ? 'border-teal-500 bg-teal-600 text-white'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-teal-300'
                     )}
                   >
                     {t} min
@@ -264,20 +264,20 @@ export function SetupWizard() {
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">Ready to start!</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Enter your name (optional) to personalize your session</p>
 
-          <Card className="p-5 bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900">
+          <Card className="p-5 bg-teal-50 dark:bg-teal-950 border-teal-100 dark:border-teal-900">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-indigo-500" />
+                <BookOpen className="h-4 w-4 text-teal-500" />
                 <span className="text-gray-600 dark:text-gray-400">Grade:</span>
                 <span className="font-semibold text-gray-900 dark:text-gray-100">{gradeLevel}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-indigo-500" />
+                <Zap className="h-4 w-4 text-teal-500" />
                 <span className="text-gray-600 dark:text-gray-400">Difficulty:</span>
                 <span className="font-semibold capitalize text-gray-900 dark:text-gray-100">{difficulty}</span>
               </div>
               <div className="flex items-center gap-2 col-span-2">
-                <Target className="h-4 w-4 text-indigo-500" />
+                <Target className="h-4 w-4 text-teal-500" />
                 <span className="text-gray-600 dark:text-gray-400">
                   {mode === 'count' ? `${totalQuestions} questions` : `${timeLimitMinutes} minute session`}
                 </span>
@@ -292,7 +292,7 @@ export function SetupWizard() {
               value={studentName}
               onChange={(e) => setStudentName(e.target.value)}
               placeholder="e.g. Alex"
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 transition-colors"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-teal-400 focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 transition-colors"
               maxLength={50}
             />
           </div>

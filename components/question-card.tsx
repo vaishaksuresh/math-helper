@@ -47,7 +47,7 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
   return (
     <div className="space-y-4">
       {/* Question */}
-      <Card className="p-6 border-0 shadow-md bg-gradient-to-br from-white to-indigo-50">
+      <Card className="p-6 border-0 shadow-md bg-white dark:bg-gray-900">
         <div className="flex items-start gap-3">
           {question.requiresPaper && (
             <Badge variant="warning" className="shrink-0 mt-0.5">
@@ -56,7 +56,7 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
             </Badge>
           )}
         </div>
-        <p className="text-xl font-medium text-gray-900 mt-3 leading-relaxed">
+        <p className="text-xl font-medium text-gray-900 dark:text-gray-100 mt-3 leading-relaxed">
           {question.questionText}
         </p>
         <div className="mt-2 flex items-center gap-2">
@@ -119,22 +119,24 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
               disabled={state === 'answered'}
               className={cn(
                 'w-full p-4 rounded-2xl border-2 text-left transition-all duration-150 flex items-center gap-4',
-                state === 'unanswered' && !isSelected && 'border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 cursor-pointer',
-                state === 'unanswered' && isSelected && 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200',
-                isCorrect && state === 'answered' && 'border-emerald-500 bg-emerald-50',
-                isWrong && 'border-red-400 bg-red-50',
-                state === 'answered' && !isCorrect && !isSelected && 'border-gray-100 bg-gray-50 opacity-60',
+                'hover:scale-[1.01] hover:shadow-sm active:scale-[0.99]',
+                state === 'unanswered' && !isSelected && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/20 cursor-pointer',
+                state === 'unanswered' && isSelected && 'border-teal-500 bg-teal-50 dark:bg-teal-950/30 ring-2 ring-teal-200 dark:ring-teal-800',
+                isCorrect && state === 'answered' && 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30',
+                isWrong && 'border-red-400 bg-red-50 dark:bg-red-950/30',
+                state === 'answered' && !isCorrect && !isSelected && 'border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 opacity-60',
               )}
             >
               <span className={cn(
-                'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0',
-                state === 'unanswered' && isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600',
-                isCorrect && state === 'answered' ? 'bg-emerald-600 text-white' : '',
-                isWrong ? 'bg-red-500 text-white' : '',
+                'w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 border-2 transition-all',
+                state === 'unanswered' && !isSelected && 'border-gray-200 dark:border-gray-600 text-gray-400 bg-transparent',
+                state === 'unanswered' && isSelected && 'border-teal-600 bg-teal-600 text-white',
+                isCorrect && state === 'answered' ? 'border-emerald-500 bg-emerald-500 text-white' : '',
+                isWrong ? 'border-red-400 bg-red-400 text-white' : '',
               )}>
                 {label}
               </span>
-              <span className="flex-1 font-medium text-gray-800">{choice}</span>
+              <span className="flex-1 font-medium text-gray-800 dark:text-gray-100">{choice}</span>
               {isCorrect && state === 'answered' && <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />}
               {isWrong && <XCircle className="h-5 w-5 text-red-500 shrink-0" />}
             </button>
@@ -146,7 +148,7 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
       {state === 'answered' && result && (
         <Card className={cn(
           'p-4 border-0',
-          result.isCorrect ? 'bg-emerald-50' : 'bg-amber-50'
+          result.isCorrect ? 'bg-emerald-50 dark:bg-emerald-950/40' : 'bg-amber-50 dark:bg-amber-950/40'
         )}>
           <div className="flex items-start gap-3">
             {result.isCorrect ? (
@@ -155,10 +157,10 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
               <XCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
             )}
             <div>
-              <p className={cn('font-semibold', result.isCorrect ? 'text-emerald-800' : 'text-amber-800')}>
+              <p className={cn('font-semibold', result.isCorrect ? 'text-emerald-800 dark:text-emerald-300' : 'text-amber-800 dark:text-amber-300')}>
                 {result.isCorrect ? 'Correct! 🎉' : `Not quite. The answer is: ${result.correctAnswer}`}
               </p>
-              <p className="text-sm text-gray-600 mt-1">{result.explanation}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{result.explanation}</p>
               {!result.isCorrect && !solveVisible && (
                 <button
                   onClick={() => { setSolveVisible(true); setSolveUsed(true) }}

@@ -28,31 +28,51 @@ export default async function HomePage() {
   return (
     <div className="space-y-8 animate-slide-in">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white">
-        <h1 className="text-3xl font-extrabold mb-2">Ready to practice math? 🧮</h1>
-        <p className="text-indigo-200 mb-6 text-lg">
-          AI-powered questions tailored to your grade level and difficulty
-        </p>
-        <Link href="/setup">
-          <Button size="xl" className="bg-white dark:bg-gray-800 text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950 font-bold shadow-lg">
-            Start New Session 🚀
-          </Button>
-        </Link>
+      <div
+        className="relative overflow-hidden rounded-3xl text-white"
+        style={{ background: 'linear-gradient(135deg, #0f766e 0%, #0d9488 60%, #0891b2 100%)' }}
+      >
+        {/* Decorative math symbols — behind content */}
+        <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
+          <span className="absolute top-2 right-4 text-[160px] font-black text-white leading-none" style={{ opacity: 0.07 }}>∑</span>
+          <span className="absolute bottom-0 right-32 text-[100px] font-black text-white leading-none" style={{ opacity: 0.05 }}>π</span>
+        </div>
+
+        {/* Content */}
+        <div className="relative p-10">
+          <p className="text-teal-200 text-xs font-bold tracking-[0.2em] uppercase mb-4">AI Math Practice</p>
+          <h1 className="text-4xl sm:text-5xl font-black mb-3 leading-[1.1] max-w-xs">
+            Level up your<br />math skills.
+          </h1>
+          <p className="text-teal-100/80 mb-8 text-base max-w-xs leading-relaxed">
+            Personalized questions tuned to your grade and difficulty.
+          </p>
+          <Link href="/setup">
+            <Button size="xl" className="bg-amber-400 hover:bg-amber-300 text-gray-900 font-bold shadow-lg border-0 transition-all hover:shadow-xl hover:-translate-y-0.5">
+              Start Practice →
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}
       {completedSessions.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { icon: BookOpen, label: 'Sessions', value: completedSessions.length, color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950' },
-            { icon: Star, label: 'Questions', value: totalQ, color: 'text-purple-600 bg-purple-50 dark:bg-purple-950' },
-            { icon: TrendingUp, label: 'Avg Score', value: avgPct != null ? `${avgPct}%` : '—', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950' },
-            { icon: Clock, label: 'In Progress', value: activeSessions.length, color: 'text-amber-600 bg-amber-50 dark:bg-amber-950' },
-          ].map(({ icon: Icon, label, value, color }) => (
-            <div key={label} className={`rounded-2xl p-4 ${color}`}>
-              <Icon className="h-5 w-5 mb-2 opacity-70" />
-              <p className="text-2xl font-bold">{value}</p>
-              <p className="text-xs font-semibold opacity-70 mt-0.5">{label}</p>
+            { icon: BookOpen, label: 'Sessions', value: completedSessions.length },
+            { icon: Star, label: 'Questions', value: totalQ },
+            { icon: TrendingUp, label: 'Avg Score', value: avgPct != null ? `${avgPct}%` : '—' },
+            { icon: Clock, label: 'In Progress', value: activeSessions.length },
+          ].map(({ icon: Icon, label, value }, i) => (
+            <div
+              key={label}
+              className={`rounded-2xl p-5 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all animate-fade-up delay-${i + 1}`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <Icon className="h-4 w-4 text-amber-500" />
+                <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wider">{label}</span>
+              </div>
+              <p className="text-3xl font-black text-gray-900 dark:text-gray-100">{value}</p>
             </div>
           ))}
         </div>
@@ -62,12 +82,14 @@ export default async function HomePage() {
       {activeSessions.length > 0 && (
         <section>
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-indigo-500" />
+            <span className="inline-block w-2 h-2 rounded-full bg-teal-500" />
             In Progress
           </h2>
           <div className="space-y-3">
-            {activeSessions.map((s) => (
-              <SessionCard key={s.id} session={s} />
+            {activeSessions.map((s, i) => (
+              <div key={s.id} className={`animate-fade-up delay-${(i % 5) + 1}`}>
+                <SessionCard session={s} />
+              </div>
             ))}
           </div>
         </section>
@@ -78,13 +100,15 @@ export default async function HomePage() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Sessions</h2>
-            <Link href="/history" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
+            <Link href="/history" className="text-sm font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300">
               View all →
             </Link>
           </div>
           <div className="space-y-3">
-            {recentSessions.map((s) => (
-              <SessionCard key={s.id} session={s} />
+            {recentSessions.map((s, i) => (
+              <div key={s.id} className={`animate-fade-up delay-${(i % 5) + 1}`}>
+                <SessionCard session={s} />
+              </div>
             ))}
           </div>
         </section>

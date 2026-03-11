@@ -4,13 +4,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
+  --background: #f8f7f4;
+  --foreground: #1a1a2e;
+  --bg-dot: rgba(0, 0, 0, 0.045);
 }
 
 .dark {
-  --background: #030712;
-  --foreground: #f9fafb;
+  --background: #0f1117;
+  --foreground: #e8e6df;
+  --bg-dot: rgba(255, 255, 255, 0.04);
 }
 
 @theme inline {
@@ -19,9 +21,15 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: radial-gradient(circle, var(--bg-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-nunito), Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-bricolage), Arial, Helvetica, sans-serif;
 }
 
 @keyframes slide-in {
@@ -30,5 +38,20 @@ body {
 }
 
 .animate-slide-in {
-  animation: slide-in 0.25s ease-out;
+  animation: slide-in 0.3s ease-out both;
 }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s ease-out both;
+}
+
+.delay-1 { animation-delay: 60ms; }
+.delay-2 { animation-delay: 120ms; }
+.delay-3 { animation-delay: 180ms; }
+.delay-4 { animation-delay: 240ms; }
+.delay-5 { animation-delay: 300ms; }
