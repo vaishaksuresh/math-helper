@@ -41,9 +41,9 @@ export function ResultsSummary({ session, questions, answers }: ResultsSummaryPr
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: 'Correct', value: score, icon: CheckCircle, color: 'text-emerald-600 bg-emerald-50' },
-          { label: 'Incorrect', value: answers.filter(a => a.isCorrect === false).length, icon: XCircle, color: 'text-red-500 bg-red-50' },
-          { label: 'Skipped', value: answers.filter(a => a.userAnswer === null).length, icon: MinusCircle, color: 'text-gray-500 bg-gray-50' },
+          { label: 'Correct', value: score, icon: CheckCircle, color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950' },
+          { label: 'Incorrect', value: answers.filter(a => a.isCorrect === false).length, icon: XCircle, color: 'text-red-500 bg-red-50 dark:bg-red-950' },
+          { label: 'Skipped', value: answers.filter(a => a.userAnswer === null).length, icon: MinusCircle, color: 'text-gray-500 bg-gray-50 dark:bg-gray-800' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className={cn('rounded-2xl p-4 text-center', color)}>
             <Icon className="h-6 w-6 mx-auto mb-1" />
@@ -55,7 +55,7 @@ export function ResultsSummary({ session, questions, answers }: ResultsSummaryPr
 
       {/* Question review */}
       <div>
-        <h3 className="font-bold text-lg text-gray-900 mb-3">Review Your Answers</h3>
+        <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-3">Review Your Answers</h3>
         <div className="space-y-3">
           {questions.map((q, i) => {
             const answer = answeredMap.get(q.id)
@@ -63,38 +63,52 @@ export function ResultsSummary({ session, questions, answers }: ResultsSummaryPr
             const wasSkipped = !answer || answer.userAnswer === null
 
             return (
-              <details key={q.id} className="group rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                <summary className="flex items-center gap-3 p-4 cursor-pointer list-none hover:bg-gray-50 transition-colors">
+              <details key={q.id} className="group rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+                <summary className="flex items-center gap-3 p-4 cursor-pointer list-none hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <span className={cn(
                     'shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold',
-                    isCorrect ? 'bg-emerald-100 text-emerald-700' :
-                    wasSkipped ? 'bg-gray-100 text-gray-500' :
-                    'bg-red-100 text-red-600'
+                    isCorrect ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300' :
+                    wasSkipped ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400' :
+                    'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400'
                   )}>
                     {i + 1}
                   </span>
-                  <span className="flex-1 text-sm font-medium text-gray-800 line-clamp-2">
+                  <span className="flex-1 text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2">
                     {q.questionText}
                   </span>
                   {isCorrect ? <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" /> :
                    wasSkipped ? <MinusCircle className="h-4 w-4 text-gray-400 shrink-0" /> :
                    <XCircle className="h-4 w-4 text-red-500 shrink-0" />}
                 </summary>
-                <div className="px-4 pb-4 pt-0 space-y-2 text-sm border-t border-gray-50">
+                <div className="px-4 pb-4 pt-0 space-y-2 text-sm border-t border-gray-50 dark:border-gray-700">
                   <div className="grid grid-cols-1 gap-1 mt-2">
                     {q.choices.map((choice) => (
                       <div key={choice} className={cn(
                         'px-3 py-1.5 rounded-lg',
-                        choice === q.correctAnswer ? 'bg-emerald-50 text-emerald-800 font-semibold' :
-                        choice === answer?.userAnswer ? 'bg-red-50 text-red-700' :
-                        'text-gray-600'
+                        choice === q.correctAnswer ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold' :
+                        choice === answer?.userAnswer ? 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400' :
+                        'text-gray-600 dark:text-gray-400'
                       )}>
                         {choice === q.correctAnswer && '✓ '}{choice}
                         {choice === answer?.userAnswer && choice !== q.correctAnswer && ' ← your answer'}
                       </div>
                     ))}
                   </div>
-                  <p className="text-gray-500 italic mt-2">{q.explanation}</p>
+                  {(answer?.hintUsed || answer?.solveUsed) && (
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {answer.hintUsed && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">
+                          💡 Hint used
+                        </span>
+                      )}
+                      {answer.solveUsed && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                          🔍 Solved for me
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-gray-500 dark:text-gray-400 italic mt-2">{q.explanation}</p>
                 </div>
               </details>
             )

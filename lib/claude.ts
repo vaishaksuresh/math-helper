@@ -11,6 +11,7 @@ export interface GeneratedQuestion {
   choices: string[]
   correctAnswer: string
   explanation: string
+  hint: string
 }
 
 const gradeTopics: Record<number, string> = {
@@ -50,6 +51,7 @@ Requirements:
 - All answer choices must be plausible (no obviously wrong answers)
 - The correct answer MUST be one of the 4 choices exactly as written
 - Keep question text clear and age-appropriate
+- Each hint must be a single sentence that helps the student think in the right direction WITHOUT giving away the answer or method
 
 Return a JSON array of exactly ${count} objects. Each object must have these exact fields:
 {
@@ -58,7 +60,8 @@ Return a JSON array of exactly ${count} objects. Each object must have these exa
   "requiresPaper": true or false,
   "choices": ["choice A", "choice B", "choice C", "choice D"],
   "correctAnswer": "the exact text of the correct choice",
-  "explanation": "Brief, student-friendly explanation of how to solve it"
+  "explanation": "Brief, student-friendly explanation of how to solve it",
+  "hint": "A subtle nudge pointing in the right direction without revealing the answer or method. One sentence."
 }
 
 Return ONLY the JSON array, no other text.`
@@ -87,5 +90,6 @@ Return ONLY the JSON array, no other text.`
     choices: Array.isArray(q.choices) ? q.choices.slice(0, 4).map(String) : [],
     correctAnswer: String(q.correctAnswer),
     explanation: String(q.explanation),
+    hint: String(q.hint ?? ''),
   }))
 }

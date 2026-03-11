@@ -38,7 +38,7 @@ export default function SessionPage() {
       .catch(() => setLoading(false))
   }, [id])
 
-  const handleAnswer = useCallback(async (answer: string | null) => {
+  const handleAnswer = useCallback(async (answer: string | null, flags: { hintUsed: boolean; solveUsed: boolean }) => {
     if (!data) throw new Error('No session data')
     const currentQ = data.questions[data.session.currentQuestionIndex]
 
@@ -48,6 +48,8 @@ export default function SessionPage() {
       body: JSON.stringify({
         questionId: currentQ.id,
         userAnswer: answer,
+        hintUsed: flags.hintUsed,
+        solveUsed: flags.solveUsed,
       }),
     })
 

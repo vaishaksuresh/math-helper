@@ -11,7 +11,7 @@ export async function POST(
   try {
     const { id } = await params
     const body = await req.json()
-    const { questionId, userAnswer, timeSpentSeconds } = body
+    const { questionId, userAnswer, timeSpentSeconds, hintUsed, solveUsed } = body
 
     if (!questionId) {
       return NextResponse.json({ error: 'Missing questionId' }, { status: 400 })
@@ -37,6 +37,8 @@ export async function POST(
       isCorrect,
       answeredAt: new Date(),
       timeSpentSeconds: timeSpentSeconds ?? null,
+      hintUsed: Boolean(hintUsed),
+      solveUsed: Boolean(solveUsed),
     })
 
     // Update session score and progress

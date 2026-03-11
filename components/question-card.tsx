@@ -8,13 +8,13 @@ import { Badge } from '@/components/ui/badge'
 import { CheckCircle, XCircle, PenLine, ChevronRight, SkipForward } from 'lucide-react'
 import type { Question } from '@/lib/db/schema'
 
-type ParsedQuestion = Omit<Question, 'choices'> & { choices: string[] }
+type ParsedQuestion = Omit<Question, 'choices'> & { choices: string[]; hint: string }
 
 interface QuestionCardProps {
   question: ParsedQuestion
   questionNumber: number
   totalQuestions: number
-  onAnswer: (answer: string | null) => Promise<{ isCorrect: boolean; correctAnswer: string; explanation: string; sessionComplete: boolean }>
+  onAnswer: (answer: string | null, flags: { hintUsed: boolean; solveUsed: boolean }) => Promise<{ isCorrect: boolean; correctAnswer: string; explanation: string; sessionComplete: boolean }>
   onNext: () => void
 }
 
@@ -25,12 +25,16 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
   const [state, setState] = useState<State>('unanswered')
   const [result, setResult] = useState<{ isCorrect: boolean; correctAnswer: string; explanation: string; sessionComplete: boolean } | null>(null)
   const [loading, setLoading] = useState(false)
+  const [hintVisible, setHintVisible] = useState(false)
+  const [solveVisible, setSolveVisible] = useState(false)
+  const [hintUsed, setHintUsed] = useState(false)
+  const [solveUsed, setSolveUsed] = useState(false)
 
   async function handleSubmit(answer: string | null) {
     if (state === 'answered' || loading) return
     setLoading(true)
     try {
-      const r = await onAnswer(answer)
+      const r = await onAnswer(answer, { hintUsed, solveUsed })
       setResult(r)
       setState('answered')
     } finally {
@@ -61,6 +65,40 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
           </Badge>
         </div>
       </Card>
+
+      {/* Hint section */}
+      <div className="space-y-2">
+        {!hintVisible ? (
+          <button
+            onClick={() => { setHintVisible(true); setHintUsed(true) }}
+            disabled={state === 'answered'}
+            className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium transition-colors disabled:opacity-40"
+          >
+            <span>💡</span> Show Hint
+          </button>
+        ) : (
+          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-200 flex gap-2">
+            <span className="shrink-0">💡</span>
+            <span>{question.hint}</span>
+          </div>
+        )}
+
+        {hintVisible && !solveVisible && state === 'unanswered' && (
+          <button
+            onClick={() => { setSolveVisible(true); setSolveUsed(true) }}
+            className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium transition-colors"
+          >
+            <span>🔍</span> Solve for me
+          </button>
+        )}
+
+        {solveVisible && (
+          <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-sm text-purple-800 dark:text-purple-200 flex gap-2">
+            <span className="shrink-0">🔍</span>
+            <span>{question.explanation}</span>
+          </div>
+        )}
+      </div>
 
       {/* Answer choices */}
       <div className="grid grid-cols-1 gap-3">
@@ -121,6 +159,20 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
                 {result.isCorrect ? 'Correct! 🎉' : `Not quite. The answer is: ${result.correctAnswer}`}
               </p>
               <p className="text-sm text-gray-600 mt-1">{result.explanation}</p>
+              {!result.isCorrect && !solveVisible && (
+                <button
+                  onClick={() => { setSolveVisible(true); setSolveUsed(true) }}
+                  className="mt-2 flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 font-medium"
+                >
+                  <span>🔍</span> Solve for me
+                </button>
+              )}
+              {solveVisible && !hintVisible && (
+                <div className="mt-2 p-3 rounded-xl bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-sm text-purple-800 dark:text-purple-200 flex gap-2">
+                  <span className="shrink-0">🔍</span>
+                  <span>{question.explanation}</span>
+                </div>
+              )}
             </div>
           </div>
         </Card>
