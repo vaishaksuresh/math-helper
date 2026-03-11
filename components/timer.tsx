@@ -42,9 +42,9 @@ export function Timer({ totalMinutes, onExpire, sessionStartedAt }: TimerProps) 
   return (
     <div className={cn(
       'flex items-center gap-2 px-4 py-2 rounded-full font-mono font-semibold text-sm transition-colors',
-      expired ? 'bg-red-100 text-red-700' :
-      warning ? 'bg-amber-100 text-amber-700 animate-pulse' :
-      'bg-gray-100 text-gray-700'
+      expired ? 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400' :
+      warning ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 animate-pulse' :
+      'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
     )}>
       <Clock className="h-4 w-4" />
       <span>

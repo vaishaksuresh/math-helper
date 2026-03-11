@@ -31,13 +31,13 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
   const actionVariant = session.status === 'active' ? 'default' : 'outline'
 
   return (
-    <Card className={cn('hover:shadow-md transition-shadow', compact && 'shadow-none border-gray-100')}>
+    <Card className={cn('hover:shadow-md transition-shadow', compact && 'shadow-none border-gray-100 dark:border-gray-700')}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               {statusIcon}
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
                 {session.studentName ? `${session.studentName}'s Session` : 'Math Session'}
               </span>
             </div>
@@ -58,9 +58,9 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
               {session.status !== 'active' && (
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 dark:text-gray-300">
                   Score: {session.score}/{session.totalQuestions} ({pct}%)
                 </span>
               )}

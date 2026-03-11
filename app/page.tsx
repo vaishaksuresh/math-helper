@@ -32,7 +32,7 @@ export default async function HomePage() {
           AI-powered questions tailored to your grade level and difficulty
         </p>
         <Link href="/setup">
-          <Button size="xl" className="bg-white text-indigo-700 hover:bg-indigo-50 font-bold shadow-lg">
+          <Button size="xl" className="bg-white dark:bg-gray-800 text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950 font-bold shadow-lg">
             Start New Session 🚀
           </Button>
         </Link>
@@ -42,10 +42,10 @@ export default async function HomePage() {
       {completedSessions.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { icon: BookOpen, label: 'Sessions', value: completedSessions.length, color: 'text-indigo-600 bg-indigo-50' },
-            { icon: Star, label: 'Questions', value: totalQ, color: 'text-purple-600 bg-purple-50' },
-            { icon: TrendingUp, label: 'Avg Score', value: avgPct != null ? `${avgPct}%` : '—', color: 'text-emerald-600 bg-emerald-50' },
-            { icon: Clock, label: 'In Progress', value: activeSessions.length, color: 'text-amber-600 bg-amber-50' },
+            { icon: BookOpen, label: 'Sessions', value: completedSessions.length, color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950' },
+            { icon: Star, label: 'Questions', value: totalQ, color: 'text-purple-600 bg-purple-50 dark:bg-purple-950' },
+            { icon: TrendingUp, label: 'Avg Score', value: avgPct != null ? `${avgPct}%` : '—', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950' },
+            { icon: Clock, label: 'In Progress', value: activeSessions.length, color: 'text-amber-600 bg-amber-50 dark:bg-amber-950' },
           ].map(({ icon: Icon, label, value, color }) => (
             <div key={label} className={`rounded-2xl p-4 ${color}`}>
               <Icon className="h-5 w-5 mb-2 opacity-70" />
@@ -59,7 +59,7 @@ export default async function HomePage() {
       {/* Active sessions */}
       {activeSessions.length > 0 && (
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-indigo-500" />
             In Progress
           </h2>
@@ -75,7 +75,7 @@ export default async function HomePage() {
       {recentSessions.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Recent Sessions</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Sessions</h2>
             <Link href="/history" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
               View all →
             </Link>
@@ -90,10 +90,10 @@ export default async function HomePage() {
 
       {/* Empty state */}
       {allSessions.length === 0 && (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-gray-400 dark:text-gray-500">
           <span className="text-6xl block mb-4">📖</span>
-          <p className="text-xl font-semibold text-gray-600 mb-2">No sessions yet!</p>
-          <p className="text-gray-400 mb-6">Start your first math practice session above.</p>
+          <p className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No sessions yet!</p>
+          <p className="text-gray-400 dark:text-gray-500 mb-6">Start your first math practice session above.</p>
         </div>
       )}
     </div>
