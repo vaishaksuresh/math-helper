@@ -1,17 +1,20 @@
 import Link from 'next/link'
+import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { sessions } from '@/lib/db/schema'
-import { desc } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { SessionCard } from '@/components/session-card'
 import { Button } from '@/components/ui/button'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HistoryPage() {
-  const allSessions = await db
-    .select()
-    .from(sessions)
-    .orderBy(desc(sessions.lastActiveAt))
+  const cookieStore = await cookies()
+  const profileId = cookieStore.get('profile_id')?.value
+
+  const allSessions = profileId
+    ? await db.select().from(sessions).where(eq(sessions.profileId, profileId)).orderBy(desc(sessions.lastActiveAt))
+    : await db.select().from(sessions).orderBy(desc(sessions.lastActiveAt))
 
   const completed = allSessions.filter((s) => s.status === 'completed')
   const active = allSessions.filter((s) => s.status === 'active')

@@ -1,7 +1,8 @@
 import Link from 'next/link'
+import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { sessions } from '@/lib/db/schema'
-import { desc } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { Button } from '@/components/ui/button'
 import { SessionCard } from '@/components/session-card'
 import { BookOpen, TrendingUp, Clock, Star } from 'lucide-react'
@@ -9,11 +10,12 @@ import { BookOpen, TrendingUp, Clock, Star } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const allSessions = await db
-    .select()
-    .from(sessions)
-    .orderBy(desc(sessions.lastActiveAt))
-    .limit(20)
+  const cookieStore = await cookies()
+  const profileId = cookieStore.get('profile_id')?.value
+
+  const allSessions = profileId
+    ? await db.select().from(sessions).where(eq(sessions.profileId, profileId)).orderBy(desc(sessions.lastActiveAt)).limit(20)
+    : await db.select().from(sessions).orderBy(desc(sessions.lastActiveAt)).limit(20)
 
   const activeSessions = allSessions.filter((s) => s.status === 'active')
   const recentSessions = allSessions.filter((s) => s.status !== 'active').slice(0, 5)

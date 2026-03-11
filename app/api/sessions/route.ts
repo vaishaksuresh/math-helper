@@ -3,14 +3,14 @@ import { db } from '@/lib/db'
 import { sessions, questions } from '@/lib/db/schema'
 import { generateQuestions } from '@/lib/claude'
 import { nanoid } from 'nanoid'
-import { desc } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const allSessions = await db
-      .select()
-      .from(sessions)
-      .orderBy(desc(sessions.lastActiveAt))
+    const profileId = req.cookies.get('profile_id')?.value ?? null
+    const allSessions = profileId
+      ? await db.select().from(sessions).where(eq(sessions.profileId, profileId)).orderBy(desc(sessions.lastActiveAt))
+      : await db.select().from(sessions).orderBy(desc(sessions.lastActiveAt))
 
     return NextResponse.json(allSessions)
   } catch (error) {
@@ -53,6 +53,8 @@ export async function POST(req: NextRequest) {
     // Generate questions via Claude
     const generated = await generateQuestions(gradeLevel, difficulty, questionCount)
 
+    const profileId = req.cookies.get('profile_id')?.value ?? null
+
     // Insert session
     await db.insert(sessions).values({
       id: sessionId,
@@ -67,6 +69,7 @@ export async function POST(req: NextRequest) {
       score: 0,
       createdAt: now,
       lastActiveAt: now,
+      profileId,
     })
 
     // Insert questions
