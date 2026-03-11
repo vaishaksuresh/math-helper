@@ -35,6 +35,7 @@ export async function PATCH(
     }
     await db.update(profiles).set(updates).where(eq(profiles.id, id))
     const updated = await db.select().from(profiles).where(eq(profiles.id, id)).get()
+    if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json(updated)
   } catch (error) {
     console.error('PATCH /api/profiles/[id] error:', error)
