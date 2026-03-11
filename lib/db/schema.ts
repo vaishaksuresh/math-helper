@@ -1,14 +1,25 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 
+export const profiles = sqliteTable('profiles', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  avatar: text('avatar').notNull(),
+  gradePreference: integer('grade_preference'),
+  difficultyPreference: text('difficulty_preference'),
+  theme: text('theme').notNull().default('dark'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
 export const sessions = sqliteTable('sessions', {
   id: text('id').primaryKey(),
+  profileId: text('profile_id').references(() => profiles.id),
   studentName: text('student_name'),
   gradeLevel: integer('grade_level').notNull(),
-  difficulty: text('difficulty').notNull(), // 'easy' | 'medium' | 'hard'
-  mode: text('mode').notNull(), // 'count' | 'time'
+  difficulty: text('difficulty').notNull(),
+  mode: text('mode').notNull(),
   totalQuestions: integer('total_questions'),
   timeLimitMinutes: integer('time_limit_minutes'),
-  status: text('status').notNull().default('active'), // 'active' | 'completed' | 'quit'
+  status: text('status').notNull().default('active'),
   currentQuestionIndex: integer('current_question_index').notNull().default(0),
   score: integer('score').notNull().default(0),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
@@ -23,9 +34,10 @@ export const questions = sqliteTable('questions', {
   questionText: text('question_text').notNull(),
   questionType: text('question_type').notNull(),
   requiresPaper: integer('requires_paper', { mode: 'boolean' }).notNull().default(false),
-  choices: text('choices').notNull(), // JSON array
+  choices: text('choices').notNull(),
   correctAnswer: text('correct_answer').notNull(),
   explanation: text('explanation').notNull(),
+  hint: text('hint').notNull().default(''),
 })
 
 export const answers = sqliteTable('answers', {
@@ -36,8 +48,12 @@ export const answers = sqliteTable('answers', {
   isCorrect: integer('is_correct', { mode: 'boolean' }),
   answeredAt: integer('answered_at', { mode: 'timestamp' }).notNull(),
   timeSpentSeconds: integer('time_spent_seconds'),
+  hintUsed: integer('hint_used', { mode: 'boolean' }).notNull().default(false),
+  solveUsed: integer('solve_used', { mode: 'boolean' }).notNull().default(false),
 })
 
+export type Profile = typeof profiles.$inferSelect
+export type NewProfile = typeof profiles.$inferInsert
 export type Session = typeof sessions.$inferSelect
 export type NewSession = typeof sessions.$inferInsert
 export type Question = typeof questions.$inferSelect

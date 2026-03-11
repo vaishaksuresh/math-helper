@@ -20,8 +20,19 @@ export const db = drizzle(sqlite, { schema })
 
 // Auto-migrate: create tables if they don't exist
 sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS profiles (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    avatar TEXT NOT NULL,
+    grade_preference INTEGER,
+    difficulty_preference TEXT,
+    theme TEXT NOT NULL DEFAULT 'dark',
+    created_at INTEGER NOT NULL
+  );
+
   CREATE TABLE IF NOT EXISTS sessions (
     id TEXT PRIMARY KEY,
+    profile_id TEXT REFERENCES profiles(id),
     student_name TEXT,
     grade_level INTEGER NOT NULL,
     difficulty TEXT NOT NULL,
@@ -45,7 +56,8 @@ sqlite.exec(`
     requires_paper INTEGER NOT NULL DEFAULT 0,
     choices TEXT NOT NULL,
     correct_answer TEXT NOT NULL,
-    explanation TEXT NOT NULL
+    explanation TEXT NOT NULL,
+    hint TEXT NOT NULL DEFAULT ''
   );
 
   CREATE TABLE IF NOT EXISTS answers (
@@ -55,8 +67,21 @@ sqlite.exec(`
     user_answer TEXT,
     is_correct INTEGER,
     answered_at INTEGER NOT NULL,
-    time_spent_seconds INTEGER
+    time_spent_seconds INTEGER,
+    hint_used INTEGER NOT NULL DEFAULT 0,
+    solve_used INTEGER NOT NULL DEFAULT 0
   );
 `)
+
+// Add new columns to existing tables (safe to run multiple times)
+const alterStatements = [
+  `ALTER TABLE sessions ADD COLUMN profile_id TEXT REFERENCES profiles(id)`,
+  `ALTER TABLE questions ADD COLUMN hint TEXT NOT NULL DEFAULT ''`,
+  `ALTER TABLE answers ADD COLUMN hint_used INTEGER NOT NULL DEFAULT 0`,
+  `ALTER TABLE answers ADD COLUMN solve_used INTEGER NOT NULL DEFAULT 0`,
+]
+for (const stmt of alterStatements) {
+  try { sqlite.exec(stmt) } catch { /* column already exists */ }
+}
 
 export { sqlite }
