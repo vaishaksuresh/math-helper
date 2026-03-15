@@ -1,6 +1,6 @@
 import { cn, scoreGrade, difficultyColor } from '@/lib/utils'
 import type { Session, Question, Answer } from '@/lib/db/schema'
-import { CheckCircle, XCircle, MinusCircle } from 'lucide-react'
+import { CheckCircle, XCircle, MinusCircle, Check, Lightbulb, Wand2 } from 'lucide-react'
 
 type ParsedQuestion = Omit<Question, 'choices'> & { choices: string[] }
 
@@ -20,8 +20,8 @@ export function ResultsSummary({ session, questions, answers }: ResultsSummaryPr
   return (
     <div className="space-y-6">
       {/* Score card */}
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl p-8 text-white text-center shadow-lg">
-        <p className={cn('text-5xl font-extrabold mb-1', color.replace('text-', 'text-white '))}>
+      <div className="rounded-3xl p-8 text-white text-center shadow-lg" style={{ background: 'linear-gradient(135deg, #0f766e 0%, #0d9488 60%, #0891b2 100%)' }}>
+        <p className="text-5xl font-extrabold mb-1 text-white">
           {pct}%
         </p>
         <p className="text-3xl font-bold opacity-90 mb-2">{label}</p>
@@ -89,21 +89,24 @@ export function ResultsSummary({ session, questions, answers }: ResultsSummaryPr
                         choice === answer?.userAnswer ? 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400' :
                         'text-gray-600 dark:text-gray-400'
                       )}>
-                        {choice === q.correctAnswer && '✓ '}{choice}
-                        {choice === answer?.userAnswer && choice !== q.correctAnswer && ' ← your answer'}
+                        <span className="flex items-center gap-1.5">
+                          {choice === q.correctAnswer && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                          {choice}
+                          {choice === answer?.userAnswer && choice !== q.correctAnswer && <span className="text-xs opacity-75 ml-1">← your answer</span>}
+                        </span>
                       </div>
                     ))}
                   </div>
                   {(answer?.hintUsed || answer?.solveUsed) && (
                     <div className="flex flex-wrap gap-2 mt-1">
                       {answer.hintUsed && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">
-                          💡 Hint used
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">
+                          <Lightbulb className="h-3 w-3" aria-hidden="true" /> Hint used
                         </span>
                       )}
                       {answer.solveUsed && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
-                          🔍 Solved for me
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                          <Wand2 className="h-3 w-3" aria-hidden="true" /> Solved for me
                         </span>
                       )}
                     </div>

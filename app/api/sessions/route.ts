@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { sessions, questions } from '@/lib/db/schema'
+import { sessions, questions, profiles } from '@/lib/db/schema'
 import { generateQuestions } from '@/lib/claude'
 import { nanoid } from 'nanoid'
 import { desc, eq } from 'drizzle-orm'
@@ -73,6 +73,13 @@ export async function POST(req: NextRequest) {
       profileId,
       topic: topic ?? null,
     })
+
+    // Update profile preferences so the wizard pre-selects these next time
+    if (profileId) {
+      await db.update(profiles)
+        .set({ gradePreference: gradeLevel, difficultyPreference: difficulty })
+        .where(eq(profiles.id, profileId))
+    }
 
     // Insert questions
     for (let i = 0; i < generated.length; i++) {
