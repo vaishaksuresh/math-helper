@@ -122,7 +122,7 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
                 'hover:scale-[1.01] hover:shadow-sm active:scale-[0.99]',
                 state === 'unanswered' && !isSelected && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/20 cursor-pointer',
                 state === 'unanswered' && isSelected && 'border-teal-500 bg-teal-50 dark:bg-teal-950/30 ring-2 ring-teal-200 dark:ring-teal-800',
-                isCorrect && state === 'answered' && 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30',
+                isCorrect && state === 'answered' && 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 animate-correct-pulse',
                 isWrong && 'border-red-400 bg-red-50 dark:bg-red-950/30',
                 state === 'answered' && !isCorrect && !isSelected && 'border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 opacity-60',
               )}
@@ -147,7 +147,7 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
       {/* Feedback */}
       {state === 'answered' && result && (
         <Card className={cn(
-          'p-4 border-0',
+          'p-4 border-0 animate-pop-in',
           result.isCorrect ? 'bg-emerald-50 dark:bg-emerald-950/40' : 'bg-amber-50 dark:bg-amber-950/40'
         )}>
           <div className="flex items-start gap-3">
