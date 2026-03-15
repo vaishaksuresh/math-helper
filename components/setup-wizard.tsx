@@ -50,15 +50,21 @@ const DIFFICULTIES = [
 const QUESTION_COUNTS = [5, 10, 15, 20, 30]
 const TIME_OPTIONS = [5, 10, 15, 20, 30]
 
-export function SetupWizard({ profileName }: { profileName?: string | null }) {
+interface SetupWizardProps {
+  profileName?: string | null
+  gradePreference?: number | null
+  difficultyPreference?: string | null
+}
+
+export function SetupWizard({ profileName, gradePreference, difficultyPreference }: SetupWizardProps) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const [gradeLevel, setGradeLevel] = useState<number>(5)
+  const [gradeLevel, setGradeLevel] = useState<number>(gradePreference ?? 5)
   const [topic, setTopic] = useState<string>('mixed')
-  const [difficulty, setDifficulty] = useState<string>('medium')
+  const [difficulty, setDifficulty] = useState<string>(difficultyPreference ?? 'medium')
   const [mode, setMode] = useState<'count' | 'time'>('count')
   const [totalQuestions, setTotalQuestions] = useState(10)
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(15)
