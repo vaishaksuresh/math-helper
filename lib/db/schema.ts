@@ -25,6 +25,7 @@ export const sessions = sqliteTable('sessions', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   completedAt: integer('completed_at', { mode: 'timestamp' }),
   lastActiveAt: integer('last_active_at', { mode: 'timestamp' }).notNull(),
+  topic: text('topic'),
 })
 
 export const questions = sqliteTable('questions', {

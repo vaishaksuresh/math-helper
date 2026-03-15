@@ -1,14 +1,16 @@
 # Math Helper
 
-AI-powered math practice for students in grades 3–8. Generates personalized multiple-choice questions using Claude, tracks progress across sessions, and supports multiple student profiles.
+AI-powered math practice for students in grades 5–12. Generates personalized multiple-choice questions using Claude, tracks progress across sessions, and supports multiple student profiles.
 
 ## Features
 
-- **AI-generated questions** — Claude creates unique, grade-appropriate problems every session (arithmetic, fractions, geometry, word problems, algebra)
+- **AI-generated questions** — Claude creates unique, grade-appropriate problems every session (arithmetic, fractions, geometry, word problems, algebra, trigonometry, calculus intro)
+- **Subtopic filter** — Focus sessions on a specific area: Algebra, Geometry, Fractions & Decimals, Statistics, Word Problems, Number Sense, Trigonometry, or Mixed
 - **Adaptive difficulty** — Easy, Medium, and Hard tiers with distinct prompting strategies
 - **Two session modes** — Practice by question count or against a time limit
 - **Hints & step-by-step solutions** — Optional help at any point, tracked per answer
 - **Multiple profiles** — Switch between student profiles; each has its own session history and theme preference
+- **Profile-aware setup** — Logged-in profile name is used automatically; no need to re-enter it
 - **Session history & scoring** — Full review of past sessions with per-question answer breakdown
 - **Dark / light mode** — Per-profile theme preference, persisted via cookie
 
@@ -32,7 +34,7 @@ AI-powered math practice for students in grades 3–8. Generates personalized mu
 app/
   layout.tsx              # Root layout — fonts, header, dark mode
   page.tsx                # Home dashboard — hero, stats, session list
-  setup/page.tsx          # 4-step session setup wizard
+  setup/page.tsx          # 5-step session setup wizard (grade → topic → difficulty → mode → start)
   session/[id]/page.tsx   # Active session — question card, progress, timer
   results/[id]/page.tsx   # Results summary with per-question review
   history/page.tsx        # Full session history
@@ -47,7 +49,7 @@ app/
 components/
   question-card.tsx       # Interactive question with hint/solve/submit flow
   session-card.tsx        # Session summary card with status accent border
-  setup-wizard.tsx        # Multi-step form (grade → difficulty → mode → start)
+  setup-wizard.tsx        # Multi-step form (grade → topic → difficulty → mode → start)
   results-summary.tsx     # Score breakdown and answer review
   timer.tsx               # Countdown timer with warning states
   profile-picker.tsx      # Profile grid with avatar display
@@ -67,7 +69,7 @@ lib/
 Four tables, all in a local SQLite file (`data/sqlite.db` by default):
 
 - **profiles** — name, avatar, grade/difficulty preferences, theme
-- **sessions** — grade level, difficulty, mode, status (`active` / `completed` / `quit`), score, progress index
+- **sessions** — grade level, difficulty, topic, mode, status (`active` / `completed` / `quit`), score, progress index
 - **questions** — generated question text, type, choices (JSON), correct answer, explanation, hint
 - **answers** — user's answer per question, correctness, hint/solve usage flags
 
@@ -77,7 +79,8 @@ The database self-migrates on startup — no migration step needed.
 
 On session creation (`POST /api/sessions`), the server calls `generateQuestions()` in `lib/claude.ts`. This sends a structured prompt to `claude-opus-4-6` specifying:
 
-- Grade-appropriate topic list (e.g. Grade 6: ratios, percentages, negative numbers…)
+- Grade-appropriate topic list (grades 5–12, e.g. Grade 9: linear functions, quadratic equations, basic trigonometry…)
+- Optional subtopic focus (e.g. "Focus specifically on: geometry. All questions must relate to this topic.")
 - Difficulty instructions (single-step / multi-step / complex word problems)
 - Output schema: `questionText`, `questionType`, `requiresPaper`, `choices[4]`, `correctAnswer`, `explanation`, `hint`
 

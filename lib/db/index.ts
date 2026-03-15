@@ -79,6 +79,7 @@ const alterStatements = [
   `ALTER TABLE questions ADD COLUMN hint TEXT NOT NULL DEFAULT ''`,
   `ALTER TABLE answers ADD COLUMN hint_used INTEGER NOT NULL DEFAULT 0`,
   `ALTER TABLE answers ADD COLUMN solve_used INTEGER NOT NULL DEFAULT 0`,
+  `ALTER TABLE sessions ADD COLUMN topic TEXT`,
 ]
 for (const stmt of alterStatements) {
   try { sqlite.exec(stmt) } catch { /* column already exists */ }

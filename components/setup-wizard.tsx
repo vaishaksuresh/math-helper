@@ -7,7 +7,18 @@ import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { BookOpen, Zap, Target, AlarmClock, Hash, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react'
 
-const GRADES = [3, 4, 5, 6, 7, 8]
+const GRADES = [5, 6, 7, 8, 9, 10, 11, 12]
+
+const TOPICS = [
+  { value: 'mixed', label: 'Mixed', icon: '🎲', description: 'Variety of topics' },
+  { value: 'algebra', label: 'Algebra', icon: '🔢', description: 'Equations & expressions' },
+  { value: 'geometry', label: 'Geometry', icon: '📐', description: 'Shapes & measurements' },
+  { value: 'fractions & decimals', label: 'Fractions & Decimals', icon: '½', description: 'Parts & proportions' },
+  { value: 'statistics & probability', label: 'Statistics', icon: '📊', description: 'Data & chance' },
+  { value: 'word problems', label: 'Word Problems', icon: '📝', description: 'Real-world math' },
+  { value: 'number sense', label: 'Number Sense', icon: '🔟', description: 'Arithmetic & operations' },
+  { value: 'trigonometry', label: 'Trigonometry', icon: '📏', description: 'Angles & triangles (9–12)' },
+]
 
 const DIFFICULTIES = [
   {
@@ -39,20 +50,21 @@ const DIFFICULTIES = [
 const QUESTION_COUNTS = [5, 10, 15, 20, 30]
 const TIME_OPTIONS = [5, 10, 15, 20, 30]
 
-export function SetupWizard() {
+export function SetupWizard({ profileName }: { profileName?: string | null }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [gradeLevel, setGradeLevel] = useState<number>(5)
+  const [topic, setTopic] = useState<string>('mixed')
   const [difficulty, setDifficulty] = useState<string>('medium')
   const [mode, setMode] = useState<'count' | 'time'>('count')
   const [totalQuestions, setTotalQuestions] = useState(10)
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(15)
   const [studentName, setStudentName] = useState('')
 
-  const steps = ['Grade', 'Difficulty', 'Session', 'Start']
+  const steps = ['Grade', 'Topic', 'Difficulty', 'Session', 'Start']
 
   async function handleStart() {
     setLoading(true)
@@ -62,9 +74,10 @@ export function SetupWizard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentName: studentName.trim() || null,
+          studentName: profileName ?? (studentName.trim() || null),
           gradeLevel,
           difficulty,
+          topic,
           mode,
           totalQuestions: mode === 'count' ? totalQuestions : null,
           timeLimitMinutes: mode === 'time' ? timeLimitMinutes : null,
@@ -109,7 +122,7 @@ export function SetupWizard() {
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">What grade are you in?</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Choose your grade level to get the right questions</p>
-          <div className="grid grid-cols-3 gap-3 mt-6">
+          <div className="grid grid-cols-4 gap-3 mt-6">
             {GRADES.map((g) => (
               <button
                 key={g}
@@ -132,8 +145,42 @@ export function SetupWizard() {
         </div>
       )}
 
-      {/* Step 1: Difficulty */}
+      {/* Step 1: Topic */}
       {step === 1 && (
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">What topic?</h2>
+          <p className="text-center text-gray-500 dark:text-gray-400">Focus on a specific area or mix it up</p>
+          <div className="grid grid-cols-2 gap-3 mt-6">
+            {TOPICS.map((t) => (
+              <button
+                key={t.value}
+                onClick={() => setTopic(t.value)}
+                className={cn(
+                  'p-4 rounded-2xl border-2 text-left transition-all duration-150',
+                  topic === t.value
+                    ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 ring-2 ring-teal-200'
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-300'
+                )}
+              >
+                <div className="text-2xl mb-1">{t.icon}</div>
+                <div className="font-bold text-sm text-gray-900 dark:text-gray-100">{t.label}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t.description}</div>
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-3 mt-4">
+            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(0)}>
+              <ChevronLeft className="h-4 w-4" /> Back
+            </Button>
+            <Button className="flex-1" size="lg" onClick={() => setStep(2)}>
+              Continue <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Difficulty */}
+      {step === 2 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">How challenging?</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Pick a difficulty that matches your skill level</p>
@@ -158,18 +205,18 @@ export function SetupWizard() {
             ))}
           </div>
           <div className="flex gap-3 mt-4">
-            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(0)}>
+            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(1)}>
               <ChevronLeft className="h-4 w-4" /> Back
             </Button>
-            <Button className="flex-1" size="lg" onClick={() => setStep(2)}>
+            <Button className="flex-1" size="lg" onClick={() => setStep(3)}>
               Continue <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Step 2: Session mode */}
-      {step === 2 && (
+      {/* Step 3: Session mode */}
+      {step === 3 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">How do you want to practice?</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Choose by number of questions or a time limit</p>
@@ -248,18 +295,18 @@ export function SetupWizard() {
           )}
 
           <div className="flex gap-3 mt-4">
-            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(1)}>
+            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(2)}>
               <ChevronLeft className="h-4 w-4" /> Back
             </Button>
-            <Button className="flex-1" size="lg" onClick={() => setStep(3)}>
+            <Button className="flex-1" size="lg" onClick={() => setStep(4)}>
               Continue <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Step 3: Name + Start */}
-      {step === 3 && (
+      {/* Step 4: Name + Start */}
+      {step === 4 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">Ready to start!</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Enter your name (optional) to personalize your session</p>
@@ -276,7 +323,14 @@ export function SetupWizard() {
                 <span className="text-gray-600 dark:text-gray-400">Difficulty:</span>
                 <span className="font-semibold capitalize text-gray-900 dark:text-gray-100">{difficulty}</span>
               </div>
-              <div className="flex items-center gap-2 col-span-2">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-teal-500" />
+                <span className="text-gray-600 dark:text-gray-400">Topic:</span>
+                <span className="font-semibold capitalize text-gray-900 dark:text-gray-100">
+                  {TOPICS.find((t) => t.value === topic)?.label ?? 'Mixed'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-teal-500" />
                 <span className="text-gray-600 dark:text-gray-400">
                   {mode === 'count' ? `${totalQuestions} questions` : `${timeLimitMinutes} minute session`}
@@ -285,17 +339,19 @@ export function SetupWizard() {
             </div>
           </Card>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Your name (optional)</label>
-            <input
-              type="text"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              placeholder="e.g. Alex"
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-teal-400 focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 transition-colors"
-              maxLength={50}
-            />
-          </div>
+          {!profileName && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Your name (optional)</label>
+              <input
+                type="text"
+                value={studentName}
+                onChange={(e) => setStudentName(e.target.value)}
+                placeholder="e.g. Alex"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-teal-400 focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 transition-colors"
+                maxLength={50}
+              />
+            </div>
+          )}
 
           {error && (
             <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
@@ -304,7 +360,7 @@ export function SetupWizard() {
           )}
 
           <div className="flex gap-3 mt-4">
-            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(2)} disabled={loading}>
+            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(3)} disabled={loading}>
               <ChevronLeft className="h-4 w-4" /> Back
             </Button>
             <Button className="flex-1" size="xl" onClick={handleStart} disabled={loading}>

@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
       mode,
       totalQuestions,
       timeLimitMinutes,
+      topic,
     } = body
 
     if (!gradeLevel || !difficulty || !mode) {
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
     const nowTs = Math.floor(now.getTime() / 1000)
 
     // Generate questions via Claude
-    const generated = await generateQuestions(gradeLevel, difficulty, questionCount)
+    const generated = await generateQuestions(gradeLevel, difficulty, questionCount, topic)
 
     const profileId = req.cookies.get('profile_id')?.value ?? null
 
@@ -70,6 +71,7 @@ export async function POST(req: NextRequest) {
       createdAt: now,
       lastActiveAt: now,
       profileId,
+      topic: topic ?? null,
     })
 
     // Insert questions

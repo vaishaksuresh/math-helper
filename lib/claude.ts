@@ -21,6 +21,10 @@ const gradeTopics: Record<number, string> = {
   6: 'ratios and rates, percentages, negative numbers, expressions and equations, area and volume, statistics (mean, median, mode), proportional relationships',
   7: 'proportions, percent problems, integers, algebra expressions, geometry (angles, triangles, circles), probability, multi-step equations',
   8: 'linear equations, systems of equations, functions, Pythagorean theorem, transformations, statistics (scatter plots, linear models), exponents and roots',
+  9: 'linear functions, quadratic equations, systems of equations, exponents, polynomials, Pythagorean theorem, coordinate geometry, basic trigonometry, statistics',
+  10: 'quadratic functions and factoring, polynomials, rational expressions, geometry proofs, trigonometry (sin/cos/tan), circles, probability',
+  11: 'advanced algebra, logarithms and exponentials, sequences and series, trigonometry identities, matrices, statistics and data analysis',
+  12: 'limits and derivatives (intro calculus), integrals (intro), advanced trigonometry, vectors, complex numbers, statistics inference',
 }
 
 const difficultyInstructions: Record<string, string> = {
@@ -32,17 +36,21 @@ const difficultyInstructions: Record<string, string> = {
 export async function generateQuestions(
   gradeLevel: number,
   difficulty: string,
-  count: number
+  count: number,
+  topic?: string
 ): Promise<GeneratedQuestion[]> {
   const topics = gradeTopics[gradeLevel] ?? gradeTopics[5]
   const difficultyGuide = difficultyInstructions[difficulty] ?? difficultyInstructions['medium']
+  const topicFocus = topic && topic !== 'mixed'
+    ? `\nFocus specifically on: ${topic}. All questions must relate to this topic.`
+    : ''
 
   const prompt = `You are an experienced math teacher. Generate exactly ${count} math practice problems for a Grade ${gradeLevel} student.
 
 Difficulty: ${difficulty.toUpperCase()}
 ${difficultyGuide}
 
-Topics appropriate for Grade ${gradeLevel}: ${topics}
+Topics appropriate for Grade ${gradeLevel}: ${topics}${topicFocus}
 
 Requirements:
 - Vary the problem types (don't repeat the same type more than 40% of the time)
