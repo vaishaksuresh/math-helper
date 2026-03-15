@@ -150,9 +150,20 @@ export default function SessionPage() {
 
       {/* Progress */}
       <div className="space-y-1.5">
-        <div className="flex justify-between text-sm text-gray-500 font-medium">
-          <span>Question {currentIndex + 1} of {total}</span>
-          <span>{session.score} correct</span>
+        <div className="flex justify-between text-sm font-medium">
+          <span className="text-gray-500">Question {currentIndex + 1} of {total}</span>
+          {currentIndex > 0 ? (
+            <span className={cn(
+              'font-semibold',
+              Math.round((session.score / currentIndex) * 100) >= 80 ? 'text-emerald-600 dark:text-emerald-400' :
+              Math.round((session.score / currentIndex) * 100) >= 60 ? 'text-amber-600 dark:text-amber-400' :
+              'text-red-500 dark:text-red-400'
+            )}>
+              {Math.round((session.score / currentIndex) * 100)}% accuracy
+            </span>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
         </div>
         <Progress value={progress} />
       </div>
