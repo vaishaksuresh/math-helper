@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, XCircle, PenLine, ChevronRight, SkipForward } from 'lucide-react'
+import { CheckCircle, XCircle, PenLine, ChevronRight, SkipForward, Lightbulb, Wand2 } from 'lucide-react'
 import type { Question } from '@/lib/db/schema'
 
 type ParsedQuestion = Omit<Question, 'choices'> & { choices: string[]; hint: string }
@@ -74,11 +74,11 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
             disabled={state === 'answered'}
             className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium transition-colors disabled:opacity-40"
           >
-            <span>💡</span> Show Hint
+            <Lightbulb className="h-4 w-4" aria-hidden="true" /> Show Hint
           </button>
         ) : (
           <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-200 flex gap-2">
-            <span className="shrink-0">💡</span>
+            <Lightbulb className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
             <span>{question.hint}</span>
           </div>
         )}
@@ -88,13 +88,13 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
             onClick={() => { setSolveVisible(true); setSolveUsed(true) }}
             className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium transition-colors"
           >
-            <span>🔍</span> Solve for me
+            <Wand2 className="h-4 w-4" aria-hidden="true" /> Solve for me
           </button>
         )}
 
         {solveVisible && (
           <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-sm text-purple-800 dark:text-purple-200 flex gap-2">
-            <span className="shrink-0">🔍</span>
+            <Wand2 className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
             <span>{question.explanation}</span>
           </div>
         )}
@@ -166,12 +166,12 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
                   onClick={() => { setSolveVisible(true); setSolveUsed(true) }}
                   className="mt-2 flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 font-medium"
                 >
-                  <span>🔍</span> Solve for me
+                  <Wand2 className="h-4 w-4" aria-hidden="true" /> Solve for me
                 </button>
               )}
               {solveVisible && !hintVisible && (
                 <div className="mt-2 p-3 rounded-xl bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-sm text-purple-800 dark:text-purple-200 flex gap-2">
-                  <span className="shrink-0">🔍</span>
+                  <Wand2 className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
                   <span>{question.explanation}</span>
                 </div>
               )}
@@ -184,14 +184,13 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
       <div className="flex gap-3 pt-2">
         {state === 'unanswered' && (
           <>
-            <Button
-              variant="ghost"
-              className="flex-none text-gray-400 hover:text-gray-600"
+            <button
+              className="flex-none flex items-center gap-1 text-sm text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors disabled:opacity-40"
               onClick={() => handleSubmit(null)}
               disabled={loading}
             >
-              <SkipForward className="h-4 w-4 mr-1" /> Skip
-            </Button>
+              <SkipForward className="h-3.5 w-3.5" aria-hidden="true" /> Skip
+            </button>
             <Button
               className="flex-1"
               size="lg"

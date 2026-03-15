@@ -116,10 +116,13 @@ export default async function HomePage() {
 
       {/* Empty state */}
       {allSessions.length === 0 && (
-        <div className="text-center py-16 text-gray-400 dark:text-gray-500">
-          <span className="text-6xl block mb-4">📖</span>
+        <div className="text-center py-16">
+          <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" aria-hidden="true" />
           <p className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No sessions yet!</p>
-          <p className="text-gray-400 dark:text-gray-500 mb-6">Start your first math practice session above.</p>
+          <p className="text-gray-400 dark:text-gray-500 mb-6">Create your first practice session to get started.</p>
+          <Link href="/setup">
+            <Button size="lg">Start Practicing →</Button>
+          </Link>
         </div>
       )}
     </div>

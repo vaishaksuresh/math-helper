@@ -55,3 +55,12 @@ h1, h2, h3, h4 {
 .delay-3 { animation-delay: 180ms; }
 .delay-4 { animation-delay: 240ms; }
 .delay-5 { animation-delay: 300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in,
+  .animate-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
