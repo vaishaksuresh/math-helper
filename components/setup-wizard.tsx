@@ -64,7 +64,8 @@ export function SetupWizard({ profileName }: { profileName?: string | null }) {
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(15)
   const [studentName, setStudentName] = useState('')
 
-  const steps = ['Grade', 'Topic', 'Difficulty', 'Session', 'Start']
+  // 4 steps: Grade → Topic → Difficulty → Session (with inline start)
+  const steps = ['Grade', 'Topic', 'Difficulty', 'Session']
 
   async function handleStart() {
     setLoading(true)
@@ -215,7 +216,7 @@ export function SetupWizard({ profileName }: { profileName?: string | null }) {
         </div>
       )}
 
-      {/* Step 3: Session mode */}
+      {/* Step 3: Session mode + inline start */}
       {step === 3 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">How do you want to practice?</h2>
@@ -294,46 +295,23 @@ export function SetupWizard({ profileName }: { profileName?: string | null }) {
             </div>
           )}
 
-          <div className="flex gap-3 mt-4">
-            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(2)}>
-              <ChevronLeft className="h-4 w-4" /> Back
-            </Button>
-            <Button className="flex-1" size="lg" onClick={() => setStep(4)}>
-              Continue <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 4: Name + Start */}
-      {step === 4 && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">Ready to start!</h2>
-          <p className="text-center text-gray-500 dark:text-gray-400">Enter your name (optional) to personalize your session</p>
-
-          <Card className="p-5 bg-teal-50 dark:bg-teal-950 border-teal-100 dark:border-teal-900">
-            <div className="grid grid-cols-2 gap-3 text-sm">
+          {/* Inline summary */}
+          <Card className="p-4 bg-teal-50 dark:bg-teal-950 border-teal-100 dark:border-teal-900">
+            <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-teal-500" />
-                <span className="text-gray-600 dark:text-gray-400">Grade:</span>
-                <span className="font-semibold text-gray-900 dark:text-gray-100">{gradeLevel}</span>
+                <BookOpen className="h-3.5 w-3.5 text-teal-500" />
+                <span className="text-gray-500 dark:text-gray-400">Grade {gradeLevel}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-teal-500" />
-                <span className="text-gray-600 dark:text-gray-400">Difficulty:</span>
-                <span className="font-semibold capitalize text-gray-900 dark:text-gray-100">{difficulty}</span>
+                <Zap className="h-3.5 w-3.5 text-teal-500" />
+                <span className="capitalize text-gray-500 dark:text-gray-400">{difficulty}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-teal-500" />
-                <span className="text-gray-600 dark:text-gray-400">Topic:</span>
-                <span className="font-semibold capitalize text-gray-900 dark:text-gray-100">
+              <div className="flex items-center gap-2 col-span-2">
+                <Target className="h-3.5 w-3.5 text-teal-500" />
+                <span className="text-gray-500 dark:text-gray-400">
                   {TOPICS.find((t) => t.value === topic)?.label ?? 'Mixed'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-teal-500" />
-                <span className="text-gray-600 dark:text-gray-400">
-                  {mode === 'count' ? `${totalQuestions} questions` : `${timeLimitMinutes} minute session`}
+                  {' · '}
+                  {mode === 'count' ? `${totalQuestions} questions` : `${timeLimitMinutes} min`}
                 </span>
               </div>
             </div>
@@ -359,8 +337,8 @@ export function SetupWizard({ profileName }: { profileName?: string | null }) {
             </div>
           )}
 
-          <div className="flex gap-3 mt-4">
-            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(3)} disabled={loading}>
+          <div className="flex gap-3 mt-2">
+            <Button variant="outline" className="flex-1" size="lg" onClick={() => setStep(2)} disabled={loading}>
               <ChevronLeft className="h-4 w-4" /> Back
             </Button>
             <Button className="flex-1" size="xl" onClick={handleStart} disabled={loading}>
