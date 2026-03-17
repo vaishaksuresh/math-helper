@@ -5,13 +5,23 @@ import { Button } from '@/components/ui/button'
 import { type Session } from '@/lib/db/schema'
 import { cn, difficultyColor, formatDate, formatTime } from '@/lib/utils'
 import { BookOpen, CheckCircle, Clock, XCircle, Play } from 'lucide-react'
+import { getSubject, type SubjectId } from '@/lib/subjects'
 
 interface SessionCardProps {
   session: Session
   compact?: boolean
 }
 
+// Subject badge — colours per subject, static strings for Tailwind v4 scanner
+const subjectBadgeClasses: Record<string, string> = {
+  math:    'bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300',
+  science: 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-300',
+  english: 'bg-blue-50 border-blue-300 text-blue-800 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-300',
+}
+
 export function SessionCard({ session, compact = false }: SessionCardProps) {
+  const subject = getSubject((session.subject ?? 'math') as SubjectId)
+
   const pct = session.totalQuestions
     ? Math.round((session.score / session.totalQuestions) * 100)
     : 0
@@ -44,11 +54,14 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
             <div className="flex items-center gap-2 mb-1">
               {statusIcon}
               <span className="font-semibold text-gray-900 dark:text-gray-100">
-                {session.studentName ? `${session.studentName}'s Session` : 'Math Session'}
+                {session.studentName ?? `${subject.label} Session`}
               </span>
             </div>
 
             <div className="flex flex-wrap gap-2 mb-3">
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${subjectBadgeClasses[subject.id] ?? subjectBadgeClasses.math}`}>
+                {subject.label}
+              </span>
               <Badge variant="secondary">
                 <BookOpen className="h-3 w-3 mr-1" />
                 Grade {session.gradeLevel}
