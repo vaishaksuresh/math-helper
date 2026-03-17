@@ -51,3 +51,6 @@ next-env.d.ts
 
 # Keep the example env file
 !.env.local.example
+
+# Superpowers brainstorming artifacts
+.superpowers/
