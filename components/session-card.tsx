@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { type Session } from '@/lib/db/schema'
 import { cn, difficultyColor, formatDate, formatTime } from '@/lib/utils'
 import { BookOpen, CheckCircle, Clock, XCircle, Play } from 'lucide-react'
-import { getSubject, type SubjectId } from '@/lib/subjects'
+import { SUBJECTS, type Subject } from '@/lib/subjects'
 
 interface SessionCardProps {
   session: Session
@@ -19,8 +19,11 @@ const subjectBadgeClasses: Record<string, string> = {
   english: 'bg-blue-50 border-blue-300 text-blue-800 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-300',
 }
 
+// Default math subject used when session.subject is missing or unrecognised
+const DEFAULT_SUBJECT = SUBJECTS[0]
+
 export function SessionCard({ session, compact = false }: SessionCardProps) {
-  const subject = getSubject((session.subject ?? 'math') as SubjectId)
+  const subject: Subject = SUBJECTS.find(s => s.id === session.subject) ?? DEFAULT_SUBJECT
 
   const pct = session.totalQuestions
     ? Math.round((session.score / session.totalQuestions) * 100)
