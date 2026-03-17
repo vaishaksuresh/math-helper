@@ -69,7 +69,7 @@ export function ProfilePicker() {
             <button
               key={profile.id}
               onClick={() => selectProfile(profile.id)}
-              className="p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-400 dark:hover:border-teal-500 hover:shadow-md transition-all text-center space-y-2"
+              className="p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-violet-400 dark:hover:border-violet-600 hover:shadow-md transition-all text-center space-y-2"
             >
               <div className="text-5xl">{profile.avatar}</div>
               <div className="font-semibold text-gray-800 dark:text-gray-200 truncate">
@@ -98,7 +98,7 @@ export function ProfilePicker() {
               onChange={e => setNewName(e.target.value)}
               placeholder="Your name..."
               maxLength={30}
-              className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-teal-400 dark:focus:border-teal-500"
+              className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-violet-400 dark:focus:border-violet-600"
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               A cute avatar will be randomly assigned 🎲

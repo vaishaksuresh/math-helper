@@ -95,7 +95,7 @@ export default function SessionPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-teal-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
       </div>
     )
   }

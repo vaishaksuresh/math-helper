@@ -30,7 +30,7 @@ export default async function HomePage() {
       {/* Hero */}
       <div
         className="relative overflow-hidden rounded-3xl text-white"
-        style={{ background: 'linear-gradient(135deg, #0f766e 0%, #0d9488 60%, #0891b2 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 60%, #6d28d9 100%)' }}
       >
         {/* Decorative math symbols — behind content */}
         <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
@@ -40,11 +40,11 @@ export default async function HomePage() {
 
         {/* Content */}
         <div className="relative p-10">
-          <p className="text-teal-200 text-xs font-bold tracking-[0.2em] uppercase mb-4">AI Math Practice</p>
+          <p className="text-violet-200 text-xs font-bold tracking-[0.2em] uppercase mb-4">AI Math Practice</p>
           <h1 className="text-4xl sm:text-5xl font-black mb-3 leading-[1.1] max-w-xs">
             Level up your<br />math skills.
           </h1>
-          <p className="text-teal-100/80 mb-8 text-base max-w-xs leading-relaxed">
+          <p className="text-violet-100/80 mb-8 text-base max-w-xs leading-relaxed">
             Personalized questions tuned to your grade and difficulty.
           </p>
           <Link href="/setup">
@@ -82,7 +82,7 @@ export default async function HomePage() {
       {activeSessions.length > 0 && (
         <section>
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-teal-500" />
+            <span className="inline-block w-2 h-2 rounded-full bg-violet-600" />
             In Progress
           </h2>
           <div className="space-y-3">
@@ -100,7 +100,7 @@ export default async function HomePage() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Sessions</h2>
-            <Link href="/history" className="text-sm font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300">
+            <Link href="/history" className="text-sm font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300">
               View all →
             </Link>
           </div>

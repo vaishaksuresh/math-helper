@@ -7,17 +7,23 @@
   --background: #f8f7f4;
   --foreground: #1a1a2e;
   --bg-dot: rgba(0, 0, 0, 0.045);
+  --color-accent: #7c3aed;
+  --color-accent-soft: #ede9fe;
 }
 
 .dark {
   --background: #0f1117;
   --foreground: #e8e6df;
   --bg-dot: rgba(255, 255, 255, 0.04);
+  --color-accent: #a78bfa;
+  --color-accent-soft: #2d2a40;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-heading: var(--font-caveat), cursive;
+  --font-body: var(--font-inter), sans-serif;
 }
 
 body {
@@ -25,11 +31,11 @@ body {
   background-image: radial-gradient(circle, var(--bg-dot) 1px, transparent 1px);
   background-size: 24px 24px;
   color: var(--foreground);
-  font-family: var(--font-nunito), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-bricolage), Arial, Helvetica, sans-serif;
+  font-family: var(--font-caveat), cursive;
 }
 
 @keyframes slide-in {
