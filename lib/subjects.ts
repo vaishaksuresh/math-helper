@@ -11,10 +11,11 @@ export interface Subject {
   id: SubjectId
   label: string
   description: string
-  // All class strings written out in full so Tailwind's static scanner picks them up
+  // Combined light+dark class strings written out in full so Tailwind's static scanner picks them up
   cardClasses: {
-    light: { bg: string; border: string; text: string; iconBg: string; iconText: string }
-    dark:  { bg: string; border: string; text: string; iconBg: string; iconText: string }
+    card: string      // card bg + border (light and dark combined)
+    iconBg: string    // icon container bg (light and dark combined)
+    iconText: string  // icon fill/text colour (light and dark combined)
   }
   topics: Topic[]
 }
@@ -25,8 +26,9 @@ export const SUBJECTS: Subject[] = [
     label: 'Math',
     description: 'Algebra, Geometry, Statistics & more',
     cardClasses: {
-      light: { bg: 'bg-amber-50',      border: 'border-amber-300',  text: 'text-amber-900',   iconBg: 'bg-amber-100',      iconText: 'text-amber-700'   },
-      dark:  { bg: 'dark:bg-amber-950/30', border: 'dark:border-amber-800', text: 'dark:text-amber-200', iconBg: 'dark:bg-amber-900/50', iconText: 'dark:text-amber-300' },
+      card:     'bg-amber-50 border-amber-300 dark:bg-amber-950/30 dark:border-amber-800',
+      iconBg:   'bg-amber-100 dark:bg-amber-900/50',
+      iconText: 'text-amber-700 dark:text-amber-300',
     },
     topics: [
       { value: 'mixed',                   label: 'Mixed',                    description: 'A bit of everything',              icon: '🎲' },
@@ -44,8 +46,9 @@ export const SUBJECTS: Subject[] = [
     label: 'Science',
     description: 'Biology, Chemistry, Physics & Earth Science',
     cardClasses: {
-      light: { bg: 'bg-emerald-50',      border: 'border-emerald-300',  text: 'text-emerald-900',   iconBg: 'bg-emerald-100',      iconText: 'text-emerald-700'   },
-      dark:  { bg: 'dark:bg-emerald-950/30', border: 'dark:border-emerald-800', text: 'dark:text-emerald-200', iconBg: 'dark:bg-emerald-900/50', iconText: 'dark:text-emerald-300' },
+      card:     'bg-emerald-50 border-emerald-300 dark:bg-emerald-950/30 dark:border-emerald-800',
+      iconBg:   'bg-emerald-100 dark:bg-emerald-900/50',
+      iconText: 'text-emerald-700 dark:text-emerald-300',
     },
     topics: [
       { value: 'mixed',         label: 'Mixed',         description: 'Questions across all science areas', icon: '🎲' },
@@ -60,8 +63,9 @@ export const SUBJECTS: Subject[] = [
     label: 'English',
     description: 'Grammar, Vocabulary, Reading & Writing',
     cardClasses: {
-      light: { bg: 'bg-blue-50',      border: 'border-blue-300',  text: 'text-blue-900',   iconBg: 'bg-blue-100',      iconText: 'text-blue-700'   },
-      dark:  { bg: 'dark:bg-blue-950/30', border: 'dark:border-blue-800', text: 'dark:text-blue-200', iconBg: 'dark:bg-blue-900/50', iconText: 'dark:text-blue-300' },
+      card:     'bg-blue-50 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800',
+      iconBg:   'bg-blue-100 dark:bg-blue-900/50',
+      iconText: 'text-blue-700 dark:text-blue-300',
     },
     topics: [
       { value: 'mixed',                 label: 'Mixed',                 description: 'Questions across all English areas', icon: '🎲' },

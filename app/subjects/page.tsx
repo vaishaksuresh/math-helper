@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { SubjectPicker } from '@/components/subject-picker'
 import { db } from '@/lib/db'
 import { profiles } from '@/lib/db/schema'
@@ -31,9 +32,9 @@ export default async function SubjectsPage() {
           <div className="mt-10 flex items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5">
             <span className="text-lg" aria-hidden>{profile.avatar}</span>
             <span>Practising as <span className="font-semibold text-zinc-800 dark:text-zinc-200">{profile.name}</span></span>
-            <a href="/profile-picker" className="ml-2 text-xs text-violet-600 dark:text-violet-400 hover:underline">
+            <Link href="/profile-picker" className="ml-2 text-xs text-violet-600 dark:text-violet-400 hover:underline">
               Switch
-            </a>
+            </Link>
           </div>
         )}
       </div>
