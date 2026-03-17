@@ -2,23 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { BookOpen, Zap, Target, AlarmClock, Hash, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react'
+import { getSubject, getTopicsForSubject, type SubjectId } from '@/lib/subjects'
 
 const GRADES = [5, 6, 7, 8, 9, 10, 11, 12]
-
-const TOPICS = [
-  { value: 'mixed', label: 'Mixed', icon: '🎲', description: 'Variety of topics' },
-  { value: 'algebra', label: 'Algebra', icon: '🔢', description: 'Equations & expressions' },
-  { value: 'geometry', label: 'Geometry', icon: '📐', description: 'Shapes & measurements' },
-  { value: 'fractions & decimals', label: 'Fractions & Decimals', icon: '½', description: 'Parts & proportions' },
-  { value: 'statistics & probability', label: 'Statistics', icon: '📊', description: 'Data & chance' },
-  { value: 'word problems', label: 'Word Problems', icon: '📝', description: 'Real-world math' },
-  { value: 'number sense', label: 'Number Sense', icon: '🔟', description: 'Arithmetic & operations' },
-  { value: 'trigonometry', label: 'Trigonometry', icon: '📏', description: 'Angles & triangles (9–12)' },
-]
 
 const DIFFICULTIES = [
   {
@@ -58,6 +49,10 @@ interface SetupWizardProps {
 
 export function SetupWizard({ profileName, gradePreference, difficultyPreference }: SetupWizardProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const subjectId = (searchParams.get('subject') ?? 'math') as SubjectId
+  const subject = getSubject(subjectId)
+  const topics = getTopicsForSubject(subjectId)
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -81,6 +76,7 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          subject: subjectId,
           studentName: profileName ?? (studentName.trim() || null),
           gradeLevel,
           difficulty,
@@ -106,6 +102,9 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
 
   return (
     <div className="max-w-xl mx-auto">
+      <h1 className="font-heading text-3xl font-bold">
+        {subject.label} Practice
+      </h1>
       {/* Step indicator */}
       <div className="flex items-center justify-center gap-2 mb-8">
         {steps.map((s, i) => (
@@ -158,7 +157,7 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">What topic?</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Focus on a specific area or mix it up</p>
           <div className="grid grid-cols-2 gap-3 mt-6">
-            {TOPICS.map((t) => (
+            {topics.map((t) => (
               <button
                 key={t.value}
                 onClick={() => setTopic(t.value)}
@@ -315,7 +314,7 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
               <div className="flex items-center gap-2 col-span-2">
                 <Target className="h-3.5 w-3.5 text-violet-600" />
                 <span className="text-gray-500 dark:text-gray-400">
-                  {TOPICS.find((t) => t.value === topic)?.label ?? 'Mixed'}
+                  {topics.find((t) => t.value === topic)?.label ?? 'Mixed'}
                   {' · '}
                   {mode === 'count' ? `${totalQuestions} questions` : `${timeLimitMinutes} min`}
                 </span>

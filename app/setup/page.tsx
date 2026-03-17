@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { profiles } from '@/lib/db/schema'
@@ -24,11 +25,13 @@ export default async function SetupPage() {
         <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Create a New Session</h1>
         <p className="text-gray-500">Answer a few quick questions to set up your practice</p>
       </div>
-      <SetupWizard
-        profileName={profileName}
-        gradePreference={gradePreference}
-        difficultyPreference={difficultyPreference}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+        <SetupWizard
+          profileName={profileName}
+          gradePreference={gradePreference}
+          difficultyPreference={difficultyPreference}
+        />
+      </Suspense>
     </div>
   )
 }
