@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react'
+import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react/dist/ssr'
 import { SUBJECTS, type Subject } from '@/lib/subjects'
 
 // Static maps — full class strings required for Tailwind v4 static analysis
