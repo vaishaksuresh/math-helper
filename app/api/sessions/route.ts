@@ -33,8 +33,12 @@ export async function POST(req: NextRequest) {
       topic,
     } = body
 
+    const VALID_SUBJECTS = ['math', 'science', 'english']
     if (!gradeLevel || !difficulty || !mode) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+    if (!VALID_SUBJECTS.includes(subject)) {
+      return NextResponse.json({ error: 'Invalid subject' }, { status: 400 })
     }
 
     // Determine how many questions to generate
