@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const {
+      subject = 'math',
       studentName,
       gradeLevel,
       difficulty,
@@ -32,8 +33,12 @@ export async function POST(req: NextRequest) {
       topic,
     } = body
 
+    const VALID_SUBJECTS = ['math', 'science', 'english']
     if (!gradeLevel || !difficulty || !mode) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+    if (!VALID_SUBJECTS.includes(subject)) {
+      return NextResponse.json({ error: 'Invalid subject' }, { status: 400 })
     }
 
     // Determine how many questions to generate
@@ -52,13 +57,20 @@ export async function POST(req: NextRequest) {
     const nowTs = Math.floor(now.getTime() / 1000)
 
     // Generate questions via Claude
-    const generated = await generateQuestions(gradeLevel, difficulty, questionCount, topic)
+    const generated = await generateQuestions({
+      subject,
+      gradeLevel,
+      difficulty,
+      topic: topic ?? 'mixed',
+      count: questionCount,
+    })
 
     const profileId = req.cookies.get('profile_id')?.value ?? null
 
     // Insert session
     await db.insert(sessions).values({
       id: sessionId,
+      subject,
       studentName: studentName ?? null,
       gradeLevel,
       difficulty,

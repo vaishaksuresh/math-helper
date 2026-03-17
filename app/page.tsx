@@ -1,130 +1,100 @@
-import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { db } from '@/lib/db'
-import { sessions } from '@/lib/db/schema'
-import { eq, desc } from 'drizzle-orm'
-import { Button } from '@/components/ui/button'
-import { SessionCard } from '@/components/session-card'
-import { BookOpen, TrendingUp, Clock, Star } from 'lucide-react'
+import Link from 'next/link'
+import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react/dist/ssr'
 
+// Force dynamic rendering — this page reads a cookie at request time
 export const dynamic = 'force-dynamic'
 
-export default async function HomePage() {
+export default async function LandingPage() {
   const cookieStore = await cookies()
-  const profileId = cookieStore.get('profile_id')?.value
-
-  const allSessions = profileId
-    ? await db.select().from(sessions).where(eq(sessions.profileId, profileId)).orderBy(desc(sessions.lastActiveAt)).limit(20)
-    : await db.select().from(sessions).orderBy(desc(sessions.lastActiveAt)).limit(20)
-
-  const activeSessions = allSessions.filter((s) => s.status === 'active')
-  const recentSessions = allSessions.filter((s) => s.status !== 'active').slice(0, 5)
-
-  const completedSessions = allSessions.filter((s) => s.status === 'completed')
-  const totalScore = completedSessions.reduce((sum, s) => sum + s.score, 0)
-  const totalQ = completedSessions.reduce((sum, s) => sum + (s.totalQuestions ?? 0), 0)
-  const avgPct = totalQ > 0 ? Math.round((totalScore / totalQ) * 100) : null
+  const isLoggedIn = !!cookieStore.get('profile_id')
 
   return (
-    <div className="space-y-8 animate-slide-in">
-      {/* Hero */}
-      <div
-        className="relative overflow-hidden rounded-3xl text-white"
-        style={{ background: 'linear-gradient(135deg, #0f766e 0%, #0d9488 60%, #0891b2 100%)' }}
-      >
-        {/* Decorative math symbols — behind content */}
-        <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
-          <span className="absolute top-2 right-4 text-[160px] font-black text-white leading-none" style={{ opacity: 0.07 }}>∑</span>
-          <span className="absolute bottom-0 right-32 text-[100px] font-black text-white leading-none" style={{ opacity: 0.05 }}>π</span>
+    <main className="min-h-screen bg-[#f8f7f4] dark:bg-[#0f1117]">
+      {/* Nav */}
+      <nav className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1a1d27]">
+        <span className="font-heading font-bold text-xl text-zinc-900 dark:text-zinc-50">
+          ✏ <span className="text-violet-600 dark:text-violet-400">Learn</span>Loop
+        </span>
+        <div className="flex items-center gap-3">
+          {isLoggedIn ? (
+            <Link href="/subjects" className="text-sm text-violet-600 dark:text-violet-400 font-medium hover:underline">
+              Go to practice →
+            </Link>
+          ) : (
+            <Link href="/profile-picker" className="text-sm text-violet-600 dark:text-violet-400 font-medium hover:underline">
+              Sign in
+            </Link>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero — split layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100vh-65px)]">
+
+        {/* Left: headline + CTA */}
+        <div className="flex flex-col justify-center px-10 py-16 lg:px-16">
+          <div className="inline-block text-xs font-semibold uppercase tracking-widest text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800 rounded-full px-3 py-1 w-fit mb-6">
+            AI-powered practice
+          </div>
+          <h1 className="font-heading text-5xl lg:text-6xl font-bold text-zinc-900 dark:text-zinc-50 leading-tight mb-4">
+            Master any subject,<br />your way.
+          </h1>
+          <p className="text-zinc-500 dark:text-zinc-400 text-lg mb-10 leading-relaxed max-w-md">
+            Personalised questions for Math, Science & English — tuned to your grade and difficulty. Grades 5–12.
+          </p>
+          <Link
+            href={isLoggedIn ? '/subjects' : '/profile-picker'}
+            className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 text-white font-heading font-bold text-xl px-8 py-4 rounded-2xl transition-colors w-fit shadow-lg"
+          >
+            {isLoggedIn ? 'Continue Practising →' : 'Get Started →'}
+          </Link>
+          <p className="text-xs text-zinc-400 mt-4">Free · No account required to try</p>
         </div>
 
-        {/* Content */}
-        <div className="relative p-10">
-          <p className="text-teal-200 text-xs font-bold tracking-[0.2em] uppercase mb-4">AI Math Practice</p>
-          <h1 className="text-4xl sm:text-5xl font-black mb-3 leading-[1.1] max-w-xs">
-            Level up your<br />math skills.
-          </h1>
-          <p className="text-teal-100/80 mb-8 text-base max-w-xs leading-relaxed">
-            Personalized questions tuned to your grade and difficulty.
-          </p>
-          <Link href="/setup">
-            <Button size="xl" className="bg-amber-400 hover:bg-amber-300 text-gray-900 font-bold shadow-lg border-0 transition-all hover:shadow-xl hover:-translate-y-0.5">
-              Start Practice →
-            </Button>
-          </Link>
+        {/* Right: decorative subject preview (non-interactive) */}
+        <div className="flex flex-col justify-center gap-4 px-8 py-12 bg-zinc-50 dark:bg-zinc-900/40 border-l border-zinc-200 dark:border-zinc-800 pointer-events-none select-none">
+          <p className="font-heading text-lg text-zinc-500 dark:text-zinc-400 mb-2">Pick a subject to begin:</p>
+
+          {/* Math */}
+          <div className="flex items-center gap-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+            <div className="bg-amber-100 dark:bg-amber-900/50 rounded-xl p-2.5 flex-shrink-0">
+              <MathOperations size={28} weight="duotone" className="text-amber-700 dark:text-amber-300" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-lg text-zinc-900 dark:text-zinc-50">Math</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Algebra · Geometry · Stats · and more</p>
+            </div>
+            <span className="ml-auto text-zinc-400" aria-hidden>›</span>
+          </div>
+
+          {/* Science */}
+          <div className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4">
+            <div className="bg-emerald-100 dark:bg-emerald-900/50 rounded-xl p-2.5 flex-shrink-0">
+              <Flask size={28} weight="duotone" className="text-emerald-700 dark:text-emerald-300" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-lg text-zinc-900 dark:text-zinc-50">Science</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Biology · Chemistry · Physics · Earth Science</p>
+            </div>
+            <span className="ml-auto text-zinc-400" aria-hidden>›</span>
+          </div>
+
+          {/* English */}
+          <div className="flex items-center gap-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-2xl p-4">
+            <div className="bg-blue-100 dark:bg-blue-900/50 rounded-xl p-2.5 flex-shrink-0">
+              <BookOpenText size={28} weight="duotone" className="text-blue-700 dark:text-blue-300" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-lg text-zinc-900 dark:text-zinc-50">English</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Grammar · Vocabulary · Reading · Writing</p>
+            </div>
+            <span className="ml-auto text-zinc-400" aria-hidden>›</span>
+          </div>
+
+          <p className="text-xs text-zinc-400 dark:text-zinc-600 text-center mt-2">Grades 5–12 · AI-generated questions</p>
         </div>
       </div>
-
-      {/* Stats */}
-      {completedSessions.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { icon: BookOpen, label: 'Sessions', value: completedSessions.length },
-            { icon: Star, label: 'Questions', value: totalQ },
-            { icon: TrendingUp, label: 'Avg Score', value: avgPct != null ? `${avgPct}%` : '—' },
-            { icon: Clock, label: 'In Progress', value: activeSessions.length },
-          ].map(({ icon: Icon, label, value }, i) => (
-            <div
-              key={label}
-              className={`rounded-2xl p-5 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all animate-fade-up delay-${i + 1}`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <Icon className="h-4 w-4 text-amber-500" />
-                <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wider">{label}</span>
-              </div>
-              <p className="text-3xl font-black text-gray-900 dark:text-gray-100">{value}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Active sessions */}
-      {activeSessions.length > 0 && (
-        <section>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-teal-500" />
-            In Progress
-          </h2>
-          <div className="space-y-3">
-            {activeSessions.map((s, i) => (
-              <div key={s.id} className={`animate-fade-up delay-${(i % 5) + 1}`}>
-                <SessionCard session={s} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Recent completed */}
-      {recentSessions.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Sessions</h2>
-            <Link href="/history" className="text-sm font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300">
-              View all →
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {recentSessions.map((s, i) => (
-              <div key={s.id} className={`animate-fade-up delay-${(i % 5) + 1}`}>
-                <SessionCard session={s} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Empty state */}
-      {allSessions.length === 0 && (
-        <div className="text-center py-16">
-          <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" aria-hidden="true" />
-          <p className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No sessions yet!</p>
-          <p className="text-gray-400 dark:text-gray-500 mb-6">Create your first practice session to get started.</p>
-          <Link href="/setup">
-            <Button size="lg">Start Practicing →</Button>
-          </Link>
-        </div>
-      )}
-    </div>
+    </main>
   )
 }

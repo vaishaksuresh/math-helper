@@ -120,8 +120,8 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
               className={cn(
                 'w-full p-4 rounded-2xl border-2 text-left transition-all duration-150 flex items-center gap-4',
                 'hover:scale-[1.01] hover:shadow-sm active:scale-[0.99]',
-                state === 'unanswered' && !isSelected && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/20 cursor-pointer',
-                state === 'unanswered' && isSelected && 'border-teal-500 bg-teal-50 dark:bg-teal-950/30 ring-2 ring-teal-200 dark:ring-teal-800',
+                state === 'unanswered' && !isSelected && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-950/20 cursor-pointer',
+                state === 'unanswered' && isSelected && 'border-violet-600 bg-violet-50 dark:bg-violet-950/30 ring-2 ring-violet-200 dark:ring-violet-800',
                 isCorrect && state === 'answered' && 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 animate-correct-pulse',
                 isWrong && 'border-red-400 bg-red-50 dark:bg-red-950/30',
                 state === 'answered' && !isCorrect && !isSelected && 'border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 opacity-60',
@@ -130,7 +130,7 @@ export function QuestionCard({ question, questionNumber, totalQuestions, onAnswe
               <span className={cn(
                 'w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 border-2 transition-all',
                 state === 'unanswered' && !isSelected && 'border-gray-200 dark:border-gray-600 text-gray-400 bg-transparent',
-                state === 'unanswered' && isSelected && 'border-teal-600 bg-teal-600 text-white',
+                state === 'unanswered' && isSelected && 'border-violet-600 bg-violet-600 text-white',
                 isCorrect && state === 'answered' ? 'border-emerald-500 bg-emerald-500 text-white' : '',
                 isWrong ? 'border-red-400 bg-red-400 text-white' : '',
               )}>

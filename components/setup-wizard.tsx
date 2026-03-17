@@ -1,24 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { BookOpen, Zap, Target, AlarmClock, Hash, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react'
+import { getSubject, getTopicsForSubject, type SubjectId } from '@/lib/subjects'
 
 const GRADES = [5, 6, 7, 8, 9, 10, 11, 12]
-
-const TOPICS = [
-  { value: 'mixed', label: 'Mixed', icon: '🎲', description: 'Variety of topics' },
-  { value: 'algebra', label: 'Algebra', icon: '🔢', description: 'Equations & expressions' },
-  { value: 'geometry', label: 'Geometry', icon: '📐', description: 'Shapes & measurements' },
-  { value: 'fractions & decimals', label: 'Fractions & Decimals', icon: '½', description: 'Parts & proportions' },
-  { value: 'statistics & probability', label: 'Statistics', icon: '📊', description: 'Data & chance' },
-  { value: 'word problems', label: 'Word Problems', icon: '📝', description: 'Real-world math' },
-  { value: 'number sense', label: 'Number Sense', icon: '🔟', description: 'Arithmetic & operations' },
-  { value: 'trigonometry', label: 'Trigonometry', icon: '📏', description: 'Angles & triangles (9–12)' },
-]
 
 const DIFFICULTIES = [
   {
@@ -58,12 +48,18 @@ interface SetupWizardProps {
 
 export function SetupWizard({ profileName, gradePreference, difficultyPreference }: SetupWizardProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const VALID_SUBJECTS: SubjectId[] = ['math', 'science', 'english']
+  const raw = searchParams.get('subject') ?? 'math'
+  const subjectId: SubjectId = VALID_SUBJECTS.includes(raw as SubjectId) ? (raw as SubjectId) : 'math'
+  const subject = getSubject(subjectId)
+  const topics = getTopicsForSubject(subjectId)
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [gradeLevel, setGradeLevel] = useState<number>(gradePreference ?? 5)
-  const [topic, setTopic] = useState<string>('mixed')
+  const [topic, setTopic] = useState<string>(topics[0].value)
   const [difficulty, setDifficulty] = useState<string>(difficultyPreference ?? 'medium')
   const [mode, setMode] = useState<'count' | 'time'>('count')
   const [totalQuestions, setTotalQuestions] = useState(10)
@@ -81,6 +77,7 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          subject: subjectId,
           studentName: profileName ?? (studentName.trim() || null),
           gradeLevel,
           difficulty,
@@ -106,20 +103,23 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
 
   return (
     <div className="max-w-xl mx-auto">
+      <h1 className="font-heading text-3xl font-bold">
+        {subject.label} Practice
+      </h1>
       {/* Step indicator */}
       <div className="flex items-center justify-center gap-2 mb-8">
         {steps.map((s, i) => (
           <div key={s} className="flex items-center gap-2">
             <div className={cn(
               'w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors',
-              i < step ? 'bg-teal-600 text-white' : i === step ? 'bg-teal-600 text-white ring-4 ring-teal-100' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
+              i < step ? 'bg-violet-600 text-white' : i === step ? 'bg-violet-600 text-white ring-4 ring-violet-100' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
             )}>
               {i < step ? '✓' : i + 1}
             </div>
-            <span className={cn('text-sm font-medium hidden sm:block', i === step ? 'text-teal-600' : 'text-gray-400')}>
+            <span className={cn('text-sm font-medium hidden sm:block', i === step ? 'text-violet-600' : 'text-gray-400')}>
               {s}
             </span>
-            {i < steps.length - 1 && <div className={cn('w-8 h-0.5', i < step ? 'bg-teal-600' : 'bg-gray-200 dark:bg-gray-700')} />}
+            {i < steps.length - 1 && <div className={cn('w-8 h-0.5', i < step ? 'bg-violet-600' : 'bg-gray-200 dark:bg-gray-700')} />}
           </div>
         ))}
       </div>
@@ -137,8 +137,8 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
                 className={cn(
                   'p-5 rounded-2xl border-2 font-bold text-2xl transition-all duration-150 hover:scale-105',
                   gradeLevel === g
-                    ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 text-teal-700 ring-2 ring-teal-200 scale-105'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-teal-300'
+                    ? 'border-violet-600 bg-violet-50 dark:bg-violet-950 text-violet-700 ring-2 ring-violet-200 scale-105'
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-violet-300'
                 )}
               >
                 <div className="text-3xl mb-1">📚</div>
@@ -158,15 +158,15 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">What topic?</h2>
           <p className="text-center text-gray-500 dark:text-gray-400">Focus on a specific area or mix it up</p>
           <div className="grid grid-cols-2 gap-3 mt-6">
-            {TOPICS.map((t) => (
+            {topics.map((t) => (
               <button
                 key={t.value}
                 onClick={() => setTopic(t.value)}
                 className={cn(
                   'p-4 rounded-2xl border-2 text-left transition-all duration-150',
                   topic === t.value
-                    ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 ring-2 ring-teal-200'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-300'
+                    ? 'border-violet-600 bg-violet-50 dark:bg-violet-950 ring-2 ring-violet-200'
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-violet-300'
                 )}
               >
                 <div className="text-2xl mb-1">{t.icon}</div>
@@ -234,11 +234,11 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
               className={cn(
                 'p-5 rounded-2xl border-2 text-center transition-all duration-150',
                 mode === 'count'
-                  ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 ring-2 ring-teal-200'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-300'
+                  ? 'border-violet-600 bg-violet-50 dark:bg-violet-950 ring-2 ring-violet-200'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-violet-300'
               )}
             >
-              <Hash className={cn('h-8 w-8 mx-auto mb-2', mode === 'count' ? 'text-teal-600' : 'text-gray-400 dark:text-gray-500')} />
+              <Hash className={cn('h-8 w-8 mx-auto mb-2', mode === 'count' ? 'text-violet-600' : 'text-gray-400 dark:text-gray-500')} />
               <div className="font-bold text-gray-900 dark:text-gray-100">By Questions</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Choose how many</div>
             </button>
@@ -247,11 +247,11 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
               className={cn(
                 'p-5 rounded-2xl border-2 text-center transition-all duration-150',
                 mode === 'time'
-                  ? 'border-teal-500 bg-teal-50 dark:bg-teal-950 ring-2 ring-teal-200'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-300'
+                  ? 'border-violet-600 bg-violet-50 dark:bg-violet-950 ring-2 ring-violet-200'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-violet-300'
               )}
             >
-              <AlarmClock className={cn('h-8 w-8 mx-auto mb-2', mode === 'time' ? 'text-teal-600' : 'text-gray-400 dark:text-gray-500')} />
+              <AlarmClock className={cn('h-8 w-8 mx-auto mb-2', mode === 'time' ? 'text-violet-600' : 'text-gray-400 dark:text-gray-500')} />
               <div className="font-bold text-gray-900 dark:text-gray-100">By Time</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Set a time limit</div>
             </button>
@@ -268,8 +268,8 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
                     className={cn(
                       'px-5 py-2.5 rounded-xl font-semibold border-2 transition-all',
                       totalQuestions === n
-                        ? 'border-teal-500 bg-teal-600 text-white'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-teal-300'
+                        ? 'border-violet-600 bg-violet-600 text-white'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-violet-300'
                     )}
                   >
                     {n}
@@ -290,8 +290,8 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
                     className={cn(
                       'px-5 py-2.5 rounded-xl font-semibold border-2 transition-all',
                       timeLimitMinutes === t
-                        ? 'border-teal-500 bg-teal-600 text-white'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-teal-300'
+                        ? 'border-violet-600 bg-violet-600 text-white'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-violet-300'
                     )}
                   >
                     {t} min
@@ -302,20 +302,20 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
           )}
 
           {/* Inline summary */}
-          <Card className="p-4 bg-teal-50 dark:bg-teal-950 border-teal-100 dark:border-teal-900">
+          <Card className="p-4 bg-violet-50 dark:bg-violet-950 border-violet-100 dark:border-violet-900">
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex items-center gap-2">
-                <BookOpen className="h-3.5 w-3.5 text-teal-500" />
+                <BookOpen className="h-3.5 w-3.5 text-violet-600" />
                 <span className="text-gray-500 dark:text-gray-400">Grade {gradeLevel}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="h-3.5 w-3.5 text-teal-500" />
+                <Zap className="h-3.5 w-3.5 text-violet-600" />
                 <span className="capitalize text-gray-500 dark:text-gray-400">{difficulty}</span>
               </div>
               <div className="flex items-center gap-2 col-span-2">
-                <Target className="h-3.5 w-3.5 text-teal-500" />
+                <Target className="h-3.5 w-3.5 text-violet-600" />
                 <span className="text-gray-500 dark:text-gray-400">
-                  {TOPICS.find((t) => t.value === topic)?.label ?? 'Mixed'}
+                  {topics.find((t) => t.value === topic)?.label ?? 'Mixed'}
                   {' · '}
                   {mode === 'count' ? `${totalQuestions} questions` : `${timeLimitMinutes} min`}
                 </span>
@@ -331,7 +331,7 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
                 value={studentName}
                 onChange={(e) => setStudentName(e.target.value)}
                 placeholder="e.g. Alex"
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-teal-400 focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 transition-colors"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-violet-400 focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 transition-colors"
                 maxLength={50}
               />
             </div>
