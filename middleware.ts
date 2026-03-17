@@ -13,6 +13,8 @@ export function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
+  if (pathname === '/') return NextResponse.next()
+
   if (!profileId) {
     return NextResponse.redirect(new URL('/profile-picker', req.url))
   }
