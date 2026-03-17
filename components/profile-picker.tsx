@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
+import { Student } from '@phosphor-icons/react'
 import type { Profile } from '@/lib/db/schema'
 
 export function ProfilePicker() {
@@ -47,8 +48,17 @@ export function ProfilePicker() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-400 dark:text-gray-500">Loading...</div>
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <Student size={52} weight="duotone" className="mx-auto text-violet-400 dark:text-violet-500" />
+          <div className="h-8 w-48 bg-zinc-200 dark:bg-zinc-700 rounded-lg animate-pulse mx-auto" />
+          <div className="h-4 w-36 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mx-auto" />
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="p-6 rounded-2xl border-2 border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 animate-pulse h-32" />
+          ))}
+        </div>
       </div>
     )
   }
@@ -56,9 +66,9 @@ export function ProfilePicker() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div className="text-center space-y-2">
-        <div className="text-5xl">🧮</div>
+        <Student size={52} weight="duotone" className="mx-auto text-violet-500 dark:text-violet-400" />
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-          Who&apos;s practicing today?
+          Who&apos;s practising today?
         </h1>
         <p className="text-gray-500 dark:text-gray-400">Pick your profile to get started</p>
       </div>
@@ -69,7 +79,7 @@ export function ProfilePicker() {
             <button
               key={profile.id}
               onClick={() => selectProfile(profile.id)}
-              className="p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-violet-400 dark:hover:border-violet-600 hover:shadow-md transition-all text-center space-y-2"
+              className="p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-violet-400 dark:hover:border-violet-600 hover:shadow-md active:scale-[0.97] transition-all text-center space-y-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
             >
               <div className="text-5xl">{profile.avatar}</div>
               <div className="font-semibold text-gray-800 dark:text-gray-200 truncate">

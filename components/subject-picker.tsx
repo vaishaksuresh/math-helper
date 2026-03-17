@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react/dist/ssr'
+import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react/ssr'
 import { SUBJECTS, type SubjectId } from '@/lib/subjects'
 
 // Static map — full class strings required for Tailwind v4 static analysis
@@ -22,7 +22,7 @@ export function SubjectPicker() {
           onClick={() => router.push(`/setup?subject=${subject.id}`)}
           className={[
             'group relative flex items-center gap-4 rounded-2xl p-5 border text-left',
-            'transition-all hover:-translate-y-1 hover:shadow-lg',
+            'transition-all hover:-translate-y-1 hover:shadow-lg active:scale-[0.97] active:translate-y-0 cursor-pointer',
             subject.cardClasses.card,
             subject.id === 'english' ? 'sm:col-span-2' : '',
           ].join(' ')}

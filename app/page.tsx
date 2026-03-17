@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react/dist/ssr'
+import { MathOperations, Flask, BookOpenText } from '@phosphor-icons/react/ssr'
 
 // Force dynamic rendering — this page reads a cookie at request time
 export const dynamic = 'force-dynamic'
@@ -52,12 +52,15 @@ export default async function LandingPage() {
           <p className="text-xs text-zinc-400 mt-4">Free · No account required to try</p>
         </div>
 
-        {/* Right: decorative subject preview (non-interactive) */}
-        <div className="flex flex-col justify-center gap-4 px-8 py-12 bg-zinc-50 dark:bg-zinc-900/40 border-l border-zinc-200 dark:border-zinc-800 pointer-events-none select-none">
+        {/* Right: subject quick-pick — clicking routes through profile if needed */}
+        <div className="flex flex-col justify-center gap-4 px-8 py-12 bg-zinc-50 dark:bg-zinc-900/40 border-l border-zinc-200 dark:border-zinc-800">
           <p className="font-heading text-lg text-zinc-500 dark:text-zinc-400 mb-2">Pick a subject to begin:</p>
 
           {/* Math */}
-          <div className="flex items-center gap-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+          <Link
+            href={isLoggedIn ? '/setup?subject=math' : '/profile-picker?subject=math'}
+            className="group flex items-center gap-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 hover:border-amber-400 dark:hover:border-amber-600 rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] cursor-pointer"
+          >
             <div className="bg-amber-100 dark:bg-amber-900/50 rounded-xl p-2.5 flex-shrink-0">
               <MathOperations size={28} weight="duotone" className="text-amber-700 dark:text-amber-300" />
             </div>
@@ -65,11 +68,14 @@ export default async function LandingPage() {
               <p className="font-heading font-bold text-lg text-zinc-900 dark:text-zinc-50">Math</p>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">Algebra · Geometry · Stats · and more</p>
             </div>
-            <span className="ml-auto text-zinc-400" aria-hidden>›</span>
-          </div>
+            <span className="ml-auto text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" aria-hidden>›</span>
+          </Link>
 
           {/* Science */}
-          <div className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4">
+          <Link
+            href={isLoggedIn ? '/setup?subject=science' : '/profile-picker?subject=science'}
+            className="group flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] cursor-pointer"
+          >
             <div className="bg-emerald-100 dark:bg-emerald-900/50 rounded-xl p-2.5 flex-shrink-0">
               <Flask size={28} weight="duotone" className="text-emerald-700 dark:text-emerald-300" />
             </div>
@@ -77,11 +83,14 @@ export default async function LandingPage() {
               <p className="font-heading font-bold text-lg text-zinc-900 dark:text-zinc-50">Science</p>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">Biology · Chemistry · Physics · Earth Science</p>
             </div>
-            <span className="ml-auto text-zinc-400" aria-hidden>›</span>
-          </div>
+            <span className="ml-auto text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" aria-hidden>›</span>
+          </Link>
 
           {/* English */}
-          <div className="flex items-center gap-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-2xl p-4">
+          <Link
+            href={isLoggedIn ? '/setup?subject=english' : '/profile-picker?subject=english'}
+            className="group flex items-center gap-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-600 rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] cursor-pointer"
+          >
             <div className="bg-blue-100 dark:bg-blue-900/50 rounded-xl p-2.5 flex-shrink-0">
               <BookOpenText size={28} weight="duotone" className="text-blue-700 dark:text-blue-300" />
             </div>
@@ -89,8 +98,8 @@ export default async function LandingPage() {
               <p className="font-heading font-bold text-lg text-zinc-900 dark:text-zinc-50">English</p>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">Grammar · Vocabulary · Reading · Writing</p>
             </div>
-            <span className="ml-auto text-zinc-400" aria-hidden>›</span>
-          </div>
+            <span className="ml-auto text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" aria-hidden>›</span>
+          </Link>
 
           <p className="text-xs text-zinc-400 dark:text-zinc-600 text-center mt-2">Grades 5–12 · AI-generated questions</p>
         </div>

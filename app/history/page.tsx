@@ -5,6 +5,7 @@ import { sessions } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { SessionCard } from '@/components/session-card'
 import { Button } from '@/components/ui/button'
+import { ChartBar } from '@phosphor-icons/react/ssr'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,16 +35,16 @@ export default async function HistoryPage() {
             {avgPct != null && ` · ${avgPct}% average score`}
           </p>
         </div>
-        <Link href="/setup">
+        <Link href="/subjects">
           <Button>New Session</Button>
         </Link>
       </div>
 
       {allSessions.length === 0 && (
         <div className="text-center py-16">
-          <span className="text-5xl block mb-4">📊</span>
-          <p className="text-gray-500 dark:text-gray-400">No sessions yet. Start practicing to see your history here!</p>
-          <Link href="/setup" className="mt-4 inline-block">
+          <ChartBar size={56} weight="duotone" className="mx-auto mb-4 text-zinc-300 dark:text-zinc-600" />
+          <p className="text-gray-500 dark:text-gray-400">No sessions yet. Start practising to see your history here!</p>
+          <Link href="/subjects" className="mt-4 inline-block">
             <Button>Get Started</Button>
           </Link>
         </div>
