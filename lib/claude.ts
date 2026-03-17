@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import type { SubjectId } from './subjects'
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -6,7 +7,7 @@ const client = new Anthropic({
 
 export interface GeneratedQuestion {
   questionText: string
-  questionType: 'arithmetic' | 'fractions' | 'geometry' | 'word_problem' | 'algebra'
+  questionType: string
   requiresPaper: boolean
   choices: string[]
   correctAnswer: string
@@ -14,17 +15,24 @@ export interface GeneratedQuestion {
   hint: string
 }
 
-const gradeTopics: Record<number, string> = {
-  3: 'addition, subtraction, multiplication (up to 10x), division basics, simple word problems, telling time, basic fractions (halves, thirds, quarters)',
-  4: 'multi-digit multiplication, long division, fractions (compare, equivalent), decimals introduction, area and perimeter, multi-step word problems',
-  5: 'fractions (add, subtract, multiply, divide), decimals (all operations), percentages intro, area of triangles, volume of rectangular prisms, coordinate planes, word problems',
-  6: 'ratios and rates, percentages, negative numbers, expressions and equations, area and volume, statistics (mean, median, mode), proportional relationships',
-  7: 'proportions, percent problems, integers, algebra expressions, geometry (angles, triangles, circles), probability, multi-step equations',
-  8: 'linear equations, systems of equations, functions, Pythagorean theorem, transformations, statistics (scatter plots, linear models), exponents and roots',
-  9: 'linear functions, quadratic equations, systems of equations, exponents, polynomials, Pythagorean theorem, coordinate geometry, basic trigonometry, statistics',
-  10: 'quadratic functions and factoring, polynomials, rational expressions, geometry proofs, trigonometry (sin/cos/tan), circles, probability',
-  11: 'advanced algebra, logarithms and exponentials, sequences and series, trigonometry identities, matrices, statistics and data analysis',
-  12: 'limits and derivatives (intro calculus), integrals (intro), advanced trigonometry, vectors, complex numbers, statistics inference',
+const subjectInstructions: Record<SubjectId, string> = {
+  math: `Generate multiple-choice mathematics questions.
+Focus on computation, problem-solving, and mathematical reasoning appropriate to the topic and grade level.
+Grade-level guidance: grades 5–6 focus on arithmetic, fractions, and basic geometry; grades 7–8 introduce algebra and statistics; grades 9–10 cover algebra II and geometry proofs; grades 11–12 include pre-calculus and trigonometry.`,
+
+  science: `Generate multiple-choice science questions appropriate for the grade level.
+- For Biology: cover cells, ecosystems, genetics, the human body, and classification.
+- For Chemistry: cover elements, chemical reactions, the periodic table, and states of matter.
+- For Physics: cover forces, motion, energy, electricity, and waves.
+- For Earth Science: cover weather, geology, the water cycle, space, and the environment.
+Use precise scientific vocabulary. Include real-world applications where appropriate.`,
+
+  english: `Generate multiple-choice English language arts questions appropriate for the grade level.
+- For Grammar: test parts of speech, sentence structure, subject-verb agreement, and punctuation.
+- For Vocabulary: present words in context; test meaning, synonyms, antonyms, and connotations.
+- For Reading Comprehension: provide a short passage (3–5 sentences) then ask about main idea, inference, detail, or author's purpose. Include the full passage in questionText.
+- For Writing: test paragraph structure, topic sentences, transitions, and editing.
+Phrase questions as complete sentences. Avoid ambiguous answer choices.`,
 }
 
 const difficultyInstructions: Record<string, string> = {
@@ -33,46 +41,30 @@ const difficultyInstructions: Record<string, string> = {
   hard: 'Use complex multi-step problems, tricky word problems, and problems that require deeper thinking. Include problems where students may need scratch paper.',
 }
 
-export async function generateQuestions(
-  gradeLevel: number,
-  difficulty: string,
-  count: number,
-  topic?: string
-): Promise<GeneratedQuestion[]> {
-  const topics = gradeTopics[gradeLevel] ?? gradeTopics[5]
-  const difficultyGuide = difficultyInstructions[difficulty] ?? difficultyInstructions['medium']
-  const topicFocus = topic && topic !== 'mixed'
-    ? `\nFocus specifically on: ${topic}. All questions must relate to this topic.`
-    : ''
+export async function generateQuestions(params: {
+  subject: SubjectId
+  gradeLevel: number
+  difficulty: string
+  topic: string
+  count: number
+}): Promise<GeneratedQuestion[]> {
+  const prompt = `${subjectInstructions[params.subject]}
 
-  const prompt = `You are an experienced math teacher. Generate exactly ${count} math practice problems for a Grade ${gradeLevel} student.
+Grade: ${params.gradeLevel}
+Topic: ${params.topic}
+Difficulty: ${params.difficulty}
+${difficultyInstructions[params.difficulty]}
 
-Difficulty: ${difficulty.toUpperCase()}
-${difficultyGuide}
-
-Topics appropriate for Grade ${gradeLevel}: ${topics}${topicFocus}
-
-Requirements:
-- Vary the problem types (don't repeat the same type more than 40% of the time)
-- Include at least ${Math.max(1, Math.floor(count * 0.2))} word problems
-- For hard difficulty, include some problems that require scratch paper
-- All answer choices must be plausible (no obviously wrong answers)
-- The correct answer MUST be one of the 4 choices exactly as written
-- Keep question text clear and age-appropriate
-- Each hint must be a single sentence that helps the student think in the right direction WITHOUT giving away the answer or method
-
-Return a JSON array of exactly ${count} objects. Each object must have these exact fields:
-{
-  "questionText": "The full problem statement",
-  "questionType": "arithmetic" | "fractions" | "geometry" | "word_problem" | "algebra",
-  "requiresPaper": true or false,
-  "choices": ["choice A", "choice B", "choice C", "choice D"],
-  "correctAnswer": "the exact text of the correct choice",
-  "explanation": "Brief, student-friendly explanation of how to solve it",
-  "hint": "A subtle nudge pointing in the right direction without revealing the answer or method. One sentence."
-}
-
-Return ONLY the JSON array, no other text.`
+Generate ${params.count} questions. Return a JSON array only, no other text, with this shape:
+[{
+  "questionText": "...",
+  "questionType": "...",
+  "requiresPaper": false,
+  "choices": ["A", "B", "C", "D"],
+  "correctAnswer": "A",
+  "explanation": "...",
+  "hint": "..."
+}]`
 
   const message = await client.messages.create({
     model: 'claude-opus-4-6',
@@ -91,9 +83,9 @@ Return ONLY the JSON array, no other text.`
   const parsed: GeneratedQuestion[] = JSON.parse(jsonMatch[0])
 
   // Validate and sanitize
-  return parsed.slice(0, count).map((q) => ({
+  return parsed.slice(0, params.count).map((q) => ({
     questionText: String(q.questionText),
-    questionType: q.questionType as GeneratedQuestion['questionType'],
+    questionType: String(q.questionType),
     requiresPaper: Boolean(q.requiresPaper),
     choices: Array.isArray(q.choices) ? q.choices.slice(0, 4).map(String) : [],
     correctAnswer: String(q.correctAnswer),
