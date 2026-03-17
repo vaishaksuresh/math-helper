@@ -24,7 +24,7 @@ export function ProfilePicker() {
 
   async function selectProfile(id: string) {
     await fetch(`/api/profiles/${id}/select`, { method: 'POST' })
-    router.push('/')
+    router.push('/subjects')
     router.refresh()
   }
 
