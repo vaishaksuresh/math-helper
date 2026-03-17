@@ -55,7 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <Link href="/history" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                 History
               </Link>
-              <Link href="/setup" className="px-4 py-2 rounded-xl text-sm font-semibold bg-violet-600 dark:bg-violet-600 text-white hover:bg-violet-700 dark:hover:bg-violet-600 transition-colors">
+              <Link href="/setup" className="px-4 py-2 rounded-xl text-sm font-semibold bg-violet-600 dark:bg-violet-500 text-white hover:bg-violet-700 dark:hover:bg-violet-600 transition-colors">
                 New Session
               </Link>
               {profile && <UserMenu profile={profile} />}
