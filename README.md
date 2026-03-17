@@ -1,17 +1,18 @@
-# Math Helper
+# LearnLoop
 
-AI-powered math practice for students in grades 5–12. Generates personalized multiple-choice questions using Claude, tracks progress across sessions, and supports multiple student profiles.
+AI-powered practice for students in grades 5–12. Generates personalised multiple-choice questions using Claude across Math, Science, and English — tuned to each student's grade level and difficulty preference.
 
 ## Features
 
-- **AI-generated questions** — Claude creates unique, grade-appropriate problems every session (arithmetic, fractions, geometry, word problems, algebra, trigonometry, calculus intro)
-- **Subtopic filter** — Focus sessions on a specific area: Algebra, Geometry, Fractions & Decimals, Statistics, Word Problems, Number Sense, Trigonometry, or Mixed
-- **Adaptive difficulty** — Easy, Medium, and Hard tiers with distinct prompting strategies
+- **Multi-subject** — Math (Algebra, Geometry, Statistics, Trigonometry…), Science (Biology, Chemistry, Physics, Earth Science), and English (Grammar, Vocabulary, Reading Comprehension, Writing)
+- **AI-generated questions** — Claude creates unique, grade-appropriate problems every session with no repetition
+- **Subtopic filter** — Focus a session on a specific area within each subject, or pick Mixed for variety
+- **Adaptive difficulty** — Easy, Medium, and Hard tiers with distinct prompting strategies per subject
 - **Two session modes** — Practice by question count or against a time limit
 - **Hints & step-by-step solutions** — Optional help at any point, tracked per answer
 - **Multiple profiles** — Switch between student profiles; each has its own session history and theme preference
-- **Profile-aware setup** — Logged-in profile name is used automatically; no need to re-enter it
-- **Session history & scoring** — Full review of past sessions with per-question answer breakdown
+- **Session history & scoring** — Full review of past sessions with per-question answer breakdown and subject badges
+- **Public landing page** — No login required to explore; profile selection only happens when starting a session
 - **Dark / light mode** — Per-profile theme preference, persisted via cookie
 
 ## Tech Stack
@@ -25,43 +26,59 @@ AI-powered math practice for students in grades 5–12. Generates personalized m
 | ORM | Drizzle ORM |
 | Styling | Tailwind CSS v4 |
 | UI primitives | Radix UI (Dialog, Progress, Slot) |
-| Icons | Lucide React |
-| Fonts | Bricolage Grotesque (headings) + Nunito (body) via `next/font` |
+| Icons | Phosphor Icons (duotone) + Lucide React |
+| Fonts | Caveat (headings, handwritten) + Inter (body) via `next/font` |
 
 ## Project Structure
 
 ```
 app/
-  layout.tsx              # Root layout — fonts, header, dark mode
-  page.tsx                # Home dashboard — hero, stats, session list
-  setup/page.tsx          # 5-step session setup wizard (grade → topic → difficulty → mode → start)
+  layout.tsx              # Root layout — fonts, nav, dark mode toggle
+  page.tsx                # Public landing page — split hero with subject quick-pick
+  subjects/page.tsx       # Subject picker (requires profile)
+  setup/page.tsx          # Session setup wizard (grade → topic → difficulty → mode → start)
   session/[id]/page.tsx   # Active session — question card, progress, timer
   results/[id]/page.tsx   # Results summary with per-question review
-  history/page.tsx        # Full session history
+  history/page.tsx        # Full session history with subject badges
   profile-picker/page.tsx # Profile selection / creation
   api/
     sessions/             # POST (create + generate questions), GET, PATCH
     sessions/[id]/answers # POST (submit answer, update score)
-    profiles/             # POST (create profile)
+    profiles/             # POST (create profile), GET
     profiles/[id]/        # PATCH (update profile)
     profiles/[id]/select  # POST (set active profile cookie)
 
 components/
+  subject-picker.tsx      # Subject selection grid (Math / Science / English)
   question-card.tsx       # Interactive question with hint/solve/submit flow
-  session-card.tsx        # Session summary card with status accent border
+  session-card.tsx        # Session summary card with status border + subject badge
   setup-wizard.tsx        # Multi-step form (grade → topic → difficulty → mode → start)
   results-summary.tsx     # Score breakdown and answer review
   timer.tsx               # Countdown timer with warning states
-  profile-picker.tsx      # Profile grid with avatar display
+  profile-picker.tsx      # Profile grid with avatar display and skeleton loading
   user-menu.tsx           # Header dropdown — theme toggle, profile switch
   ui/                     # Base components: Button, Card, Badge, Dialog, Progress
 
 lib/
-  claude.ts               # Anthropic SDK client + question generation prompt
-  db/index.ts             # SQLite connection, Drizzle setup, auto-migration
+  subjects.ts             # Single source of truth for all subjects, topics, and card styles
+  claude.ts               # Anthropic SDK client + subject-specific question generation prompts
+  db/index.ts             # SQLite connection, Drizzle setup
   db/schema.ts            # Table definitions: profiles, sessions, questions, answers
   utils.ts                # cn(), difficultyColor(), formatDate(), formatTime()
   avatars.ts              # Avatar emoji set for profiles
+```
+
+## Navigation Flow
+
+```
+/ (public landing)
+  ├─ has profile cookie → /subjects
+  └─ no cookie         → /profile-picker → /subjects
+
+/subjects   (requires profile)
+  └─ click subject → /setup?subject=math|science|english
+
+/setup → /session/[id] → /results/[id]
 ```
 
 ## Database Schema
@@ -69,22 +86,25 @@ lib/
 Four tables, all in a local SQLite file (`data/sqlite.db` by default):
 
 - **profiles** — name, avatar, grade/difficulty preferences, theme
-- **sessions** — grade level, difficulty, topic, mode, status (`active` / `completed` / `quit`), score, progress index
+- **sessions** — grade level, difficulty, topic, **subject**, mode, status (`active` / `completed` / `quit`), score, progress index
 - **questions** — generated question text, type, choices (JSON), correct answer, explanation, hint
 - **answers** — user's answer per question, correctness, hint/solve usage flags
 
-The database self-migrates on startup — no migration step needed.
+> **Existing database migration:** If you have a database created before the multi-subject update, add the `subject` column manually:
+> ```bash
+> sqlite3 ./data/sqlite.db "ALTER TABLE sessions ADD COLUMN subject TEXT NOT NULL DEFAULT 'math';"
+> ```
+> Fresh installs self-migrate on startup — no extra step needed.
 
 ## How Question Generation Works
 
-On session creation (`POST /api/sessions`), the server calls `generateQuestions()` in `lib/claude.ts`. This sends a structured prompt to `claude-opus-4-6` specifying:
+On session creation (`POST /api/sessions`), the server calls `generateQuestions()` in `lib/claude.ts`. The prompt is tailored per subject:
 
-- Grade-appropriate topic list (grades 5–12, e.g. Grade 9: linear functions, quadratic equations, basic trigonometry…)
-- Optional subtopic focus (e.g. "Focus specifically on: geometry. All questions must relate to this topic.")
-- Difficulty instructions (single-step / multi-step / complex word problems)
-- Output schema: `questionText`, `questionType`, `requiresPaper`, `choices[4]`, `correctAnswer`, `explanation`, `hint`
+- **Math** — Grade-appropriate topic list (e.g. Grade 9: linear functions, quadratic equations, basic trigonometry); optional subtopic focus; single-step / multi-step / complex word problem difficulty tiers
+- **Science** — Age-appropriate Biology, Chemistry, Physics, or Earth Science concepts; conceptual and calculation questions
+- **English** — Grammar rules, vocabulary in context, reading comprehension passages, or writing mechanics questions
 
-Claude returns a JSON array. The questions are validated, stored in the database, and the session begins immediately.
+Claude returns a JSON array of questions. Each question includes `questionText`, `questionType`, `choices[4]`, `correctAnswer`, `explanation`, and `hint`. Questions are validated, stored, and the session begins immediately.
 
 ## Getting Started
 
