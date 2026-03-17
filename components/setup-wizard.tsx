@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -50,7 +49,9 @@ interface SetupWizardProps {
 export function SetupWizard({ profileName, gradePreference, difficultyPreference }: SetupWizardProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const subjectId = (searchParams.get('subject') ?? 'math') as SubjectId
+  const VALID_SUBJECTS: SubjectId[] = ['math', 'science', 'english']
+  const raw = searchParams.get('subject') ?? 'math'
+  const subjectId: SubjectId = VALID_SUBJECTS.includes(raw as SubjectId) ? (raw as SubjectId) : 'math'
   const subject = getSubject(subjectId)
   const topics = getTopicsForSubject(subjectId)
   const [step, setStep] = useState(0)
@@ -58,7 +59,7 @@ export function SetupWizard({ profileName, gradePreference, difficultyPreference
   const [error, setError] = useState<string | null>(null)
 
   const [gradeLevel, setGradeLevel] = useState<number>(gradePreference ?? 5)
-  const [topic, setTopic] = useState<string>('mixed')
+  const [topic, setTopic] = useState<string>(topics[0].value)
   const [difficulty, setDifficulty] = useState<string>(difficultyPreference ?? 'medium')
   const [mode, setMode] = useState<'count' | 'time'>('count')
   const [totalQuestions, setTotalQuestions] = useState(10)
